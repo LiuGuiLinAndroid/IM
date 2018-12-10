@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--所有边距-->
+    <dimen name="size_all_pading">38.0px</dimen>
+    <!--所有标题大小-->
+    <dimen name="size_all_title_size">95.0px</dimen>
+
+    <!--上边距-->
+    <dimen name="size_login_op_m_t">152.0px</dimen>
+    <!--输入框边距-->
+    <dimen name="size_login_op_et_t">57.0px</dimen>
+    <!--文字边距-->
+    <dimen name="size_login_op_text_t">19.0px</dimen>
+
+
+</resources>
+
+

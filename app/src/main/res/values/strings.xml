@@ -1,0 +1,14 @@
+<resources>
+
+    <string name="app_name">IM</string>
+
+    <string name="str_login_title_text">账号密码登录</string>
+    <string name="str_login_account">账户</string>
+    <string name="str_login_pw">密码</string>
+    <string name="str_login_forget_pw">忘记密码</string>
+    <string name="str_login_tips">登录遇到问题?</string>
+    <string name="str_login_reg">注册账号</string>
+    <string name="str_login_login">登录</string>
+
+
+</resources>
