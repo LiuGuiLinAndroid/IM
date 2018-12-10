@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--所有边距-->
-    <dimen name="size_all_pading">20px</dimen>
-    <!--所有标题大小-->
-    <dimen name="size_all_title_size">50px</dimen>
+    <!--顶部 - 右标题的 大小-->
+    <dimen name="size_appbar_right_text_size">36px</dimen>
+    <!--顶部 - 中间标题的 大小-->
+    <dimen name="size_appbar_center_text_size">40px</dimen>
 
-    <!--上边距-->
-    <dimen name="size_login_op_m_t">80px</dimen>
-    <!--输入框边距-->
-    <dimen name="size_login_op_et_t">30px</dimen>
-    <!--文字边距-->
-    <dimen name="size_login_op_text_t">10px</dimen>
+    <!--所有按钮文字大小-->
+    <dimen name="size_all_button_text_size">36px</dimen>
+    <!--所有输入框高度-->
+    <dimen name="size_all_et_height">100px</dimen>
+    <!--所有分割线高度-->
+    <dimen name="size_all_line_height">1px</dimen>
 
+    <!--登录 - 上边距 -->
+    <dimen name="size_login_top_pading">20px</dimen>
+    <!--登录 - 按钮边距 -->
+    <dimen name="size_login_button_top_pading">50px</dimen>
 
 </resources>
 

@@ -2,52 +2,87 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_white"
-    android:orientation="vertical"
-    android:padding="@dimen/size_all_pading">
+    android:orientation="vertical">
 
-    <!--标题-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_all_pading"
-        android:text="@string/str_login_title_text"
-        android:textColor="@color/color_black"
-        android:textSize="@dimen/size_all_title_size"
-        android:textStyle="bold" />
+    <include
+        layout="@layout/includ_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-    <!--账户-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_login_op_m_t"
-        android:orientation="vertical">
+        android:layout_height="@dimen/size_all_et_height"
+        android:layout_marginTop="@dimen/size_login_top_pading"
+        android:background="@color/color_white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
-        <EditText
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/str_login_account"
+            android:text="@string/str_login_account"
             android:textColor="@color/color_black" />
 
         <EditText
-            android:layout_width="match_parent"
+            android:id="@+id/et_account"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:paddingLeft="10dp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_line_height"
+        android:alpha="0.2"
+        android:background="@color/color_gary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_et_height"
+        android:background="@color/color_white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_login_op_et_t"
-            android:hint="@string/str_login_pw"
+            android:text="@string/str_login_pw"
             android:textColor="@color/color_black" />
+
+        <EditText
+            android:id="@+id/et_pw"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:paddingLeft="10dp" />
 
     </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_login_op_text_t"
-        android:text="@string/str_login_tips" />
-
-    <Button
+        android:id="@+id/tv_login_tips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_login_op_m_t"
+        android:layout_marginTop="@dimen/size_login_top_pading"
+        android:gravity="right"
+        android:paddingRight="10dp"
+        android:text="@string/str_login_tips"
+        android:textColor="@color/colorPrimary" />
+
+    <Button
+        android:id="@+id/btn_login"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size_login_button_top_pading"
+        android:layout_marginTop="@dimen/size_login_button_top_pading"
         android:background="@drawable/shape_all_button_bg"
         android:text="@string/str_login_login"
         android:textColor="@color/color_white" />

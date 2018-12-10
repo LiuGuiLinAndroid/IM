@@ -71,6 +71,9 @@
         <!--主页-->
         <activity android:name=".MainActivity"/>
 
+        <!--注册-->
+        <activity android:name=".ui.RegUserActivity"/>
+
         <!--登录-->
         <activity android:name=".ui.LoginActivity"/>
 
