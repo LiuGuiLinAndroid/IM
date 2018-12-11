@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_camera"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_login_login_item_height"
+        android:gravity="center"
+        android:text="@string/str_user_edit_camera"
+        android:textColor="@color/color_black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_line_height"
+        android:alpha="0.2"
+        android:background="@color/color_gary" />
+
+    <TextView
+        android:id="@+id/tv_ablum"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_login_login_item_height"
+        android:gravity="center"
+        android:text="@string/str_user_edit_ablum"
+        android:textColor="@color/color_black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_line_height"
+        android:alpha="0.2"
+        android:background="@color/color_gary" />
+
+    <TextView
+        android:id="@+id/tv_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_login_login_item_height"
+        android:gravity="center"
+        android:text="@string/str_common_cancel"
+        android:textColor="@color/color_black" />
+
+</LinearLayout>

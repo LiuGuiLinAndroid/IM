@@ -26,6 +26,8 @@
             android:textColor="@color/color_black" />
 
         <EditText
+            android:text="18679606764"
+            android:inputType="number"
             android:id="@+id/et_account"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -57,6 +59,8 @@
             android:textColor="@color/color_black" />
 
         <EditText
+            android:text="123456"
+            android:inputType="textPassword"
             android:id="@+id/et_pw"
             android:layout_width="0dp"
             android:layout_height="match_parent"

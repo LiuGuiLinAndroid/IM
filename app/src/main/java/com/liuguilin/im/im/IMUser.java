@@ -1,6 +1,7 @@
 package com.liuguilin.im.im;
 
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
 
 /**
  * FileName: IMUser
@@ -17,6 +18,12 @@ public class IMUser extends BmobUser {
     private int age;
     //性别
     private boolean sex;
+    //头像
+    private BmobFile avatar;
+    //生日
+    private String birthday;
+    //电话
+    private String phone;
 
     public String getNickname() {
         return nickname;
@@ -40,5 +47,29 @@ public class IMUser extends BmobUser {
 
     public void setSex(boolean sex) {
         this.sex = sex;
+    }
+
+    public BmobFile getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(BmobFile avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

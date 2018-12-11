@@ -1,5 +1,7 @@
 package com.liuguilin.im.entity;
 
+import android.support.v4.app.Fragment;
+
 /**
  * FileName: Constants
  * Founder: LiuGuiLin
@@ -14,5 +16,9 @@ public class Constants {
     //Project Log Switch
     public static final boolean DEBUG = true;
 
+    //Is Login
+    public static boolean isLogin = false;
 
+    //Current Fragment
+    public static Fragment CURRENT_FRAGMENT = null;
 }

@@ -59,27 +59,41 @@
 
         <service android:name="cn.bmob.newim.core.service.HeartBeatService" />
 
+        <!--相机兼容7.0-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.liuguilin.im.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
         <!--Service-->
+        <service android:name=".service.IMService" />
 
         <!--BrocastReceiver-->
 
         <!--Activity-->
 
         <!--引导页-->
-        <activity android:name=".ui.GuideActivity"/>
+        <activity android:name=".ui.GuideActivity" />
 
         <!--主页-->
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".MainActivity" />
 
         <!--注册-->
-        <activity android:name=".ui.RegUserActivity"/>
+        <activity android:name=".ui.RegUserActivity" />
 
         <!--登录-->
-        <activity android:name=".ui.LoginActivity"/>
+        <activity android:name=".ui.LoginActivity" />
 
+        <!--忘记密码-->
+        <activity android:name=".ui.ForgetPwActivity" />
 
-
-
+        <!--编辑信息-->
+        <activity android:name=".ui.UserEditActivity" />
 
 
     </application>

@@ -12,11 +12,24 @@
     <dimen name="size_all_et_height">140.0px</dimen>
     <!--所有分割线高度-->
     <dimen name="size_all_line_height">1.4px</dimen>
+    <!--所有提示框高-->
+    <dimen name="size_login_dialog_height">420.0px</dimen>
+    <!--所有提示框宽-->
+    <dimen name="size_login_dialog_width">840.0px</dimen>
 
     <!--登录 - 上边距 -->
     <dimen name="size_login_top_pading">28.0px</dimen>
     <!--登录 - 按钮边距 -->
     <dimen name="size_login_button_top_pading">70.0px</dimen>
+    <!--登录 - 提示框Item -->
+    <dimen name="size_login_login_item_height">140.0px</dimen>
+
+    <!--我 - 头像Item高度-->
+    <dimen name="size_me_item_height">280.0px</dimen>
+    <!--我 - 头像高宽-->
+    <dimen name="size_me_photo_height">224.0px</dimen>
+    <!--我 - 上边距 -->
+    <dimen name="size_me_top_pading">28.0px</dimen>
 
 </resources>
 

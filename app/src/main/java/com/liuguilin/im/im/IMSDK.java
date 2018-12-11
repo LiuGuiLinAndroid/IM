@@ -1,0 +1,192 @@
+package com.liuguilin.im.im;
+
+import android.text.TextUtils;
+
+import com.liuguilin.im.entity.Constants;
+import com.liuguilin.im.utils.IMLog;
+
+import java.util.List;
+
+import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.listener.ConnectListener;
+import cn.bmob.newim.listener.ConnectStatusChangeListener;
+import cn.bmob.v3.BmobSMS;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
+
+/**
+ * FileName: IMSDK
+ * Founder: LiuGuiLin
+ * Create Date: 2018/12/11 9:59
+ * Email: lgl@szokl.com.cn
+ * Profile: IM
+ */
+public class IMSDK {
+
+    /**
+     * 是否登录
+     *
+     * @return
+     */
+    public static boolean isLogin() {
+        return Constants.isLogin;
+    }
+
+    /**
+     * 获取当前用户信息
+     *
+     * @return
+     */
+    public static IMUser getCurrentUser() {
+        IMUser user = BmobUser.getCurrentUser(IMUser.class);
+        return user;
+    }
+
+    /**
+     * 更新用户信息
+     *
+     * @param imUser
+     * @param listener
+     */
+    public static void updateUser(IMUser imUser, UpdateListener listener) {
+        imUser.update(listener);
+    }
+
+    /**
+     * 获取短信
+     *
+     * @param phone
+     * @param listener
+     */
+    public static void requestSMSCode(String phone, QueryListener<Integer> listener) {
+        BmobSMS.requestSMSCode(phone, "DataSDK", listener);
+    }
+
+    /**
+     * 验证短信验证码
+     *
+     * @param phone
+     * @param code
+     * @param listener
+     */
+    public static void verifySmsCode(String phone, String code, UpdateListener listener) {
+        BmobSMS.verifySmsCode(phone, code, listener);
+    }
+
+    /**
+     * 验证码重置密码
+     *
+     * @param code
+     * @param newPassword
+     * @param listener
+     */
+    public static void resetPasswordBySMSCode(String code, String newPassword, UpdateListener listener) {
+        BmobUser.resetPasswordBySMSCode(code, newPassword, listener);
+    }
+
+    /**
+     * 注册
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @param listener 回调
+     */
+    public static void regUser(String username, String password, SaveListener<IMUser> listener) {
+        IMUser imUser = new IMUser();
+        imUser.setUsername(username);
+        imUser.setPassword(password);
+        imUser.signUp(listener);
+    }
+
+    /**
+     * 登录
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @param listener 回调
+     */
+    public static void login(String username, String password, SaveListener<IMUser> listener) {
+        IMUser imUser = new IMUser();
+        imUser.setUsername(username);
+        imUser.setPassword(password);
+        imUser.login(listener);
+    }
+
+    /**
+     * 连接IM服务器
+     *
+     * @param listener
+     */
+    public static void connect(ConnectListener listener) {
+        IMUser imUser = getCurrentUser();
+        if (imUser != null) {
+            if (!TextUtils.isEmpty(imUser.getObjectId())) {
+                BmobIM.connect(imUser.getObjectId(), listener);
+            } else {
+                IMLog.e("user error");
+            }
+        }
+    }
+
+    /**
+     * 断开连接
+     */
+    public static void disConnect() {
+        BmobIM.getInstance().disConnect();
+    }
+
+    /**
+     * 监听连接状态
+     *
+     * @param listener
+     */
+    public static void setOnConnectStatusChangeListener(ConnectStatusChangeListener listener) {
+        BmobIM.getInstance().setOnConnectStatusChangeListener(listener);
+    }
+
+    /**
+     * 查询全部会话
+     */
+    public static List<BmobIMConversation> loadAllConversation() {
+        return BmobIM.getInstance().loadAllConversation();
+    }
+
+    /**
+     * 查询指定会话的未读数量
+     *
+     * @param conversationId
+     * @return
+     */
+    public static long getUnReadCount(String conversationId) {
+        return BmobIM.getInstance().getUnReadCount(conversationId);
+    }
+
+    /**
+     * 查询全部未读数量
+     *
+     * @return
+     */
+    public static long getAllUnReadCount() {
+        return BmobIM.getInstance().getAllUnReadCount();
+    }
+
+    /**
+     * 删除会话
+     *
+     * @param c
+     */
+    public static void deleteConversation(BmobIMConversation c) {
+        BmobIM.getInstance().deleteConversation(c);
+    }
+
+    /**
+     * 清理全部会话
+     */
+    public static void clearAllConversation() {
+        BmobIM.getInstance().clearAllConversation();
+    }
+}
