@@ -5,15 +5,22 @@ import android.text.TextUtils;
 import com.liuguilin.im.entity.Constants;
 import com.liuguilin.im.utils.IMLog;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import cn.bmob.newim.BmobIM;
 import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMUserInfo;
+import cn.bmob.newim.core.BmobIMClient;
 import cn.bmob.newim.listener.ConnectListener;
 import cn.bmob.newim.listener.ConnectStatusChangeListener;
+import cn.bmob.newim.listener.MessageSendListener;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
@@ -189,4 +196,46 @@ public class IMSDK {
     public static void clearAllConversation() {
         BmobIM.getInstance().clearAllConversation();
     }
+
+    /**
+     * 查询用户
+     *
+     * @param username
+     * @param listener
+     */
+    public static void queryFriend(String username, FindListener<IMUser> listener) {
+        BmobQuery<IMUser> query = new BmobQuery<>();
+        query.addWhereEqualTo("username", username);
+        query.findObjects(listener);
+    }
+
+    /**
+     * 发送添加好友消息
+     *
+     * @param info     会话
+     * @param content  留言
+     * @param listener
+     */
+    public static void sendAddFriendMessage(BmobIMUserInfo info, String content, MessageSendListener listener) {
+        if (info != null) {
+            //创建一个暂态的会话入口
+            BmobIMConversation conversationEntrance = BmobIM.getInstance().startPrivateConversation(info, true, null);
+            //根据会话入口获取消息管理
+            BmobIMConversation messageManager = BmobIMConversation.obtain(BmobIMClient.getInstance(), conversationEntrance);
+            AddFriendMessage msg = new AddFriendMessage();
+            IMUser imUser = getCurrentUser();
+            //给对方的一个留言信息
+            msg.setContent(content);
+            Map<String, Object> map = new HashMap<>();
+            //发送者姓名
+            map.put("name", imUser.getUsername());
+            //发送者的头像
+            map.put("avatar", imUser.getAvatar());
+            //发送者的uid
+            map.put("uid", imUser.getObjectId());
+            msg.setExtraMap(map);
+            messageManager.sendMessage(msg, listener);
+        }
+    }
 }
+

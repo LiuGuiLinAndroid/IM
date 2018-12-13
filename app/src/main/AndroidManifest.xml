@@ -95,6 +95,17 @@
         <!--编辑信息-->
         <activity android:name=".ui.UserEditActivity" />
 
+        <!--查询好友-->
+        <activity android:name=".ui.QueryFriendActivity" />
+
+        <!--用户详情-->
+        <activity android:name=".ui.UserInfoActivity" />
+
+        <!--添加好友-->
+        <activity android:name=".ui.AddFriendActivity" />
+
+        <!--聊天-->
+        <activity android:name=".ui.ChatActivity" />
 
     </application>
 

@@ -4,6 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <include
+        layout="@layout/includ_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:id="@+id/ll_user"
         android:layout_width="match_parent"
@@ -60,10 +65,10 @@
 
         </LinearLayout>
 
+
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/ll_new_friend"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_all_et_height"
         android:layout_marginTop="@dimen/size_me_top_pading"
@@ -73,17 +78,71 @@
         android:paddingRight="10dp">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/str_me_new_friend"
+            android:text="@string/str_user_info_city"
             android:textColor="@color/color_black" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/img_user_arrow" />
+        <TextView
+            android:id="@+id/tv_city"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical" />
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_line_height"
+        android:alpha="0.2"
+        android:background="@color/color_gary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_et_height"
+        android:background="@color/color_white"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="@string/str_user_info_desc"
+            android:textColor="@color/color_black" />
+
+        <TextView
+            android:id="@+id/tv_desc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_add"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/size_login_button_top_pading"
+        android:layout_marginTop="@dimen/size_login_button_top_pading"
+        android:layout_marginRight="@dimen/size_login_button_top_pading"
+        android:background="@drawable/shape_all_button_bg"
+        android:text="@string/str_add_friend_title_text"
+        android:textColor="@color/color_white" />
+
+    <Button
+        android:id="@+id/btn_momo"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/size_login_button_top_pading"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="@dimen/size_login_button_top_pading"
+        android:background="@drawable/shape_all_button_bg"
+        android:text="@string/str_user_info_momo"
+        android:textColor="@color/color_white" />
 
 </LinearLayout>

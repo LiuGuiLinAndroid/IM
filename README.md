@@ -17,3 +17,9 @@
         android:alpha="0.2"
         android:background="@color/color_gary" />
 ```
+
+### NO.2 Button Style
+
+```java
+    style="?android:attr/borderlessButtonStyle"
+```

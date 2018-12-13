@@ -31,6 +31,9 @@
     <string name="str_main_title_me">我</string>
     <string name="str_main_title_add">添加</string>
     <string name="str_main_title_more">更多</string>
+    <string name="str_main_title_more_link">发起群聊</string>
+    <string name="str_main_title_add_friend">添加朋友</string>
+    <string name="str_main_title_scan">扫一扫</string>
 
     <!--我-->
     <string name="str_me_new_friend">新朋友</string>
@@ -46,6 +49,22 @@
     <string name="str_user_edit_phone">电话:</string>
     <string name="str_user_edit_camera">相机</string>
     <string name="str_user_edit_ablum">相册</string>
+
+    <!--添加好友-->
+    <string name="str_add_friend_title_text">添加好友</string>
+    <string name="str_add_friend_et_tips">请输入账号</string>
+    <string name="str_add_friend_btn_text">搜索</string>
+    <string name="str_add_friend_tips_text">你需要发送验证申请,等对方通过</string>
+    <string name="str_add_friend_commit_title">验证申请</string>
+    <string name="str_add_friend_send_success">好友请求发送成功，等待验证</string>
+    <string name="str_add_friend_send_fail">请求失败</string>
+
+    <!--用户信息-->
+    <string name="str_user_info_title_text">用户信息</string>
+    <string name="str_user_info_city">地区</string>
+    <string name="str_user_info_desc">个性签名</string>
+    <string name="str_user_info_dialog_error">用户信息出错</string>
+    <string name="str_user_info_momo">陌生人聊天</string>
 
     <!--Toast-->
     <string name="str_toast_account_null">账户不能为空</string>
@@ -68,6 +87,7 @@
     <string name="str_common_confirm">确定</string>
     <string name="str_common_cancel">取消</string>
     <string name="str_common_save">保存</string>
+    <string name="str_common_commit">提交</string>
     <string name="str_common_boy">男</string>
     <string name="str_common_girl">女</string>
 

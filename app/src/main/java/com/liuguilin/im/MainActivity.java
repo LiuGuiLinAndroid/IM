@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,8 +16,15 @@ import com.liuguilin.im.fragment.FriendFragment;
 import com.liuguilin.im.fragment.MeFragment;
 import com.liuguilin.im.fragment.NewsFragment;
 import com.liuguilin.im.fragment.SessionFragment;
+import com.liuguilin.im.im.IMUser;
+import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.service.IMService;
+import com.liuguilin.im.ui.QueryFriendActivity;
 import com.liuguilin.im.utils.CommonUtils;
+import com.liuguilin.im.view.DialogView;
+
+import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.bean.BmobIMConversation;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -48,6 +56,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MeFragment mMeFragment;
     private FragmentTransaction mMeTransaction;
 
+    private DialogView mMenuDialog;
+    private TextView tv_more_link;
+    private TextView tv_add_friend;
+    private TextView tv_scan;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
 
         initFragment();
+        initMenuDialog();
 
         include_title_iv_back = (RelativeLayout) findViewById(R.id.include_title_iv_back);
         include_title_text = (TextView) findViewById(R.id.include_title_text);
@@ -80,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv_me = (TextView) findViewById(R.id.tv_me);
         ll_me = (LinearLayout) findViewById(R.id.ll_me);
 
+        title_right_text.setOnClickListener(this);
         ll_session.setOnClickListener(this);
         ll_friend.setOnClickListener(this);
         ll_news.setOnClickListener(this);
@@ -92,6 +107,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         checkMainTab(0);
 
         CommonUtils.startService(this, IMService.class);
+    }
+
+    private void initMenuDialog() {
+        mMenuDialog = DialogManager.getInstance().initView(this, R.layout.dialog_mian_menu, Gravity.CENTER);
+        tv_more_link = (TextView) mMenuDialog.findViewById(R.id.tv_more_link);
+        tv_add_friend = (TextView) mMenuDialog.findViewById(R.id.tv_add_friend);
+        tv_scan = (TextView) mMenuDialog.findViewById(R.id.tv_scan);
+
+        tv_more_link.setOnClickListener(this);
+        tv_add_friend.setOnClickListener(this);
+        tv_scan.setOnClickListener(this);
     }
 
     private void initFragment() {
@@ -247,6 +273,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.title_right_text:
+                if (Constants.CURRENT_FRAGMENT instanceof SessionFragment) {
+                    DialogManager.getInstance().show(mMenuDialog);
+                } else if (Constants.CURRENT_FRAGMENT instanceof MeFragment) {
+
+                }
+                break;
+            case R.id.tv_more_link:
+                DialogManager.getInstance().hide(mMenuDialog);
+                break;
+            case R.id.tv_add_friend:
+                DialogManager.getInstance().hide(mMenuDialog);
+                CommonUtils.startActivity(this,QueryFriendActivity.class,false);
+                break;
+            case R.id.tv_scan:
+                DialogManager.getInstance().hide(mMenuDialog);
+                break;
             case R.id.ll_session:
                 checkMainTab(0);
                 break;

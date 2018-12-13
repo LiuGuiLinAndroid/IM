@@ -30,9 +30,20 @@
     <dimen name="size_me_photo_height">160px</dimen>
     <!--我 - 上边距 -->
     <dimen name="size_me_top_pading">20px</dimen>
+    <!--我 - 姓名大小 -->
+    <dimen name="size_me_name_text_size">50px</dimen>
+    <!--我 - 姓名大小 -->
+    <dimen name="size_me_name_account_size">30px</dimen>
 
     <!--编辑用户 - 上边距 -->
     <dimen name="size_user_edit_top_pading">20px</dimen>
+
+    <!--添加好友 - 上边距 -->
+    <dimen name="size_add_friend_top_pading">20px</dimen>
+    <!--添加好友 - 头像 -->
+    <dimen name="size_add_friend_photo_height">120px</dimen>
+    <!--添加好友 - Item高度 -->
+    <dimen name="size_add_friend_item_height">150px</dimen>
 
 </resources>
 

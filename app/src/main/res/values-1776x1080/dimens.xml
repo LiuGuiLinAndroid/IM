@@ -30,6 +30,18 @@
     <dimen name="size_me_photo_height">224.0px</dimen>
     <!--我 - 上边距 -->
     <dimen name="size_me_top_pading">28.0px</dimen>
+    <!--我 - 姓名大小 -->
+    <dimen name="size_me_name_text_size">42.0px</dimen>
+
+    <!--编辑用户 - 上边距 -->
+    <dimen name="size_user_edit_top_pading">28.0px</dimen>
+
+    <!--添加好友 - 上边距 -->
+    <dimen name="size_add_friend_top_pading">28.0px</dimen>
+    <!--添加好友 - 头像 -->
+    <dimen name="size_add_friend_photo_height">168.0px</dimen>
+    <!--添加好友 - Item高度 -->
+    <dimen name="size_add_friend_item_height">210.0px</dimen>
 
 </resources>
 

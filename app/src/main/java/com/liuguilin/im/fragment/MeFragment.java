@@ -1,10 +1,12 @@
 package com.liuguilin.im.fragment;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +35,8 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
 
     private CircleImageView iv_user;
     private TextView tv_niname;
+    private TextView tv_account;
+    private ImageView iv_sex;
     private LinearLayout ll_user;
     private LinearLayout ll_new_friend;
 
@@ -46,6 +50,8 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     private void initView(View view) {
         iv_user = (CircleImageView) view.findViewById(R.id.iv_user);
         tv_niname = (TextView) view.findViewById(R.id.tv_niname);
+        tv_account = (TextView) view.findViewById(R.id.tv_account);
+        iv_sex = (ImageView) view.findViewById(R.id.iv_sex);
         ll_user = (LinearLayout) view.findViewById(R.id.ll_user);
         ll_new_friend = (LinearLayout) view.findViewById(R.id.ll_new_friend);
 
@@ -53,8 +59,13 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         ll_new_friend.setOnClickListener(this);
 
         //逻辑部分
+        updateUserInfo();
+    }
+
+    private void updateUserInfo() {
         IMUser imUser = IMSDK.getCurrentUser();
         if (imUser != null) {
+            tv_account.setText(imUser.getUsername());
             String nickName = imUser.getNickname();
             if (!TextUtils.isEmpty(nickName)) {
                 tv_niname.setText(nickName);
@@ -68,6 +79,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                     GlideUtils.loadImg(getActivity(), url, iv_user);
                 }
             }
+            iv_sex.setImageResource(imUser.isSex() ? R.drawable.img_boy : R.drawable.img_girl);
         }
     }
 

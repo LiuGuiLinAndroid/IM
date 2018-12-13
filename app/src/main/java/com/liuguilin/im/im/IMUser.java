@@ -24,6 +24,10 @@ public class IMUser extends BmobUser {
     private String birthday;
     //电话
     private String phone;
+    //地区
+    private String city;
+    //签名
+    private String desc;
 
     public String getNickname() {
         return nickname;
@@ -71,5 +75,35 @@ public class IMUser extends BmobUser {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    @Override
+    public String toString() {
+        return "IMUser{" +
+                "nickname='" + nickname + '\'' +
+                ", age=" + age +
+                ", sex=" + sex +
+                ", avatar=" + avatar +
+                ", birthday='" + birthday + '\'' +
+                ", phone='" + phone + '\'' +
+                ", city='" + city + '\'' +
+                ", desc='" + desc + '\'' +
+                '}';
     }
 }
