@@ -12,14 +12,18 @@ import java.util.logging.Logger;
 
 import cn.bmob.newim.BmobIM;
 import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.bean.BmobIMUserInfo;
 import cn.bmob.newim.core.BmobIMClient;
+import cn.bmob.newim.event.MessageEvent;
 import cn.bmob.newim.listener.ConnectListener;
 import cn.bmob.newim.listener.ConnectStatusChangeListener;
 import cn.bmob.newim.listener.MessageSendListener;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
@@ -200,12 +204,13 @@ public class IMSDK {
     /**
      * 查询用户
      *
-     * @param username
+     * @param key
+     * @param values
      * @param listener
      */
-    public static void queryFriend(String username, FindListener<IMUser> listener) {
+    public static void queryFriend(String key, String values, FindListener<IMUser> listener) {
         BmobQuery<IMUser> query = new BmobQuery<>();
-        query.addWhereEqualTo("username", username);
+        query.addWhereEqualTo(key, values);
         query.findObjects(listener);
     }
 
@@ -230,12 +235,72 @@ public class IMSDK {
             //发送者姓名
             map.put("name", imUser.getUsername());
             //发送者的头像
-            map.put("avatar", imUser.getAvatar());
+            map.put("avatar", imUser.getAvatar().getFileUrl());
             //发送者的uid
             map.put("uid", imUser.getObjectId());
             msg.setExtraMap(map);
             messageManager.sendMessage(msg, listener);
         }
+    }
+
+    /**
+     * 更新用户信息
+     *
+     * @param event
+     */
+    public static void updateUserInfo(MessageEvent event, final OnResultListener listener) {
+        final BmobIMConversation conversation = event.getConversation();
+        final BmobIMUserInfo info = event.getFromUserInfo();
+        final BmobIMMessage msg = event.getMessage();
+        String username = info.getName();
+        final String avatar = info.getAvatar();
+        String title = conversation.getConversationTitle();
+        String icon = conversation.getConversationIcon();
+        if (username.equals(title)) {
+            if (!TextUtils.isEmpty(avatar)) {
+                if (avatar.equals(icon)) {
+                    queryFriend("objectId", info.getUserId(), new FindListener<IMUser>() {
+                        @Override
+                        public void done(List<IMUser> list, BmobException e) {
+                            if (list != null && list.size() == 1) {
+                                IMUser imUser = list.get(0);
+                                String name = imUser.getUsername();
+                                BmobFile file = imUser.getAvatar();
+                                if (file != null) {
+                                    String avatar = file.getFileUrl();
+                                    info.setAvatar(avatar);
+                                    conversation.setConversationIcon(avatar);
+                                }
+                                info.setName(name);
+                                conversation.setConversationTitle(name);
+                                //更新用戶資料
+                                BmobIM.getInstance().updateUserInfo(info);
+                                if (!msg.isTransient()) {
+                                    BmobIM.getInstance().updateConversation(conversation);
+                                }
+                                listener.done(null);
+                            } else {
+                                IMLog.e(e.toString());
+                                listener.done(e);
+                            }
+                        }
+                    });
+                }else {
+                    listener.done(null);
+                }
+            }else {
+                listener.done(null);
+            }
+        }else {
+            listener.done(null);
+        }
+    }
+
+    /**
+     * 结果接口
+     */
+    public interface OnResultListener {
+        void done(BmobException e);
     }
 }
 

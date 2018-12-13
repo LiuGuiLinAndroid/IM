@@ -21,4 +21,10 @@ public class Constants {
 
     //Current Fragment
     public static Fragment CURRENT_FRAGMENT = null;
+
+    //Messgae Read Status
+    public static final int MSG_UNREAD = 0;
+    public static final int MSG_READ = 1;
+    public static final int MSG_ADD = 2;
+    public static final int MSG_UNADD = 3;
 }

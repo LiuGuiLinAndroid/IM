@@ -12,13 +12,20 @@ import android.widget.TextView;
 
 import com.liuguilin.im.R;
 import com.liuguilin.im.base.BaseFragment;
+import com.liuguilin.im.event.EventManager;
+import com.liuguilin.im.event.MessageEvent;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
+import com.liuguilin.im.ui.NewFriendActivity;
 import com.liuguilin.im.ui.UserEditActivity;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
 
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import cn.bmob.v3.datatype.BmobFile;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -39,6 +46,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     private ImageView iv_sex;
     private LinearLayout ll_user;
     private LinearLayout ll_new_friend;
+    private ImageView iv_new_firend_point;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +61,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         tv_account = (TextView) view.findViewById(R.id.tv_account);
         iv_sex = (ImageView) view.findViewById(R.id.iv_sex);
         ll_user = (LinearLayout) view.findViewById(R.id.ll_user);
+        iv_new_firend_point = (ImageView) view.findViewById(R.id.iv_new_firend_point);
         ll_new_friend = (LinearLayout) view.findViewById(R.id.ll_new_friend);
 
         ll_user.setOnClickListener(this);
@@ -90,7 +99,31 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                 CommonUtils.startActivity(getActivity(), UserEditActivity.class, false);
                 break;
             case R.id.ll_new_friend:
+                CommonUtils.startActivity(getActivity(), NewFriendActivity.class, false);
+                break;
+        }
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        switch (event.getType()) {
+            case EventManager.EVENT_TYPE_NEW_FIREND:
+                iv_new_firend_point.setVisibility(View.VISIBLE);
+                break;
+            case EventManager.EVENT_TYPE_NEW_FIREND_UN:
+                iv_new_firend_point.setVisibility(View.GONE);
                 break;
         }
     }

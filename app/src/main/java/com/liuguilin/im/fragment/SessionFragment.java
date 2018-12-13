@@ -37,6 +37,6 @@ public class SessionFragment extends BaseFragment {
     private void initView(View view) {
         mSessionRyView = (RecyclerView) view.findViewById(R.id.mSessionRyView);
 
-        mList = IMSDK.loadAllConversation();
+        //mList = IMSDK.loadAllConversation();
     }
 }

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.liuguilin.im.manager.DialogManager;
+import com.liuguilin.im.view.DialogView;
+
 /**
  * FileName: CommonUtils
  * Founder: LiuGuiLin

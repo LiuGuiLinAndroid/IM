@@ -20,9 +20,11 @@ import cn.bmob.newim.bean.BmobIMMessage;
  */
 public class AddFriendMessage extends BmobIMExtraMessage {
 
+    public static final String ADD = "add";
+
     @Override
     public String getMsgType() {
-        return "add";
+        return ADD;
     }
 
     /**
@@ -41,6 +43,7 @@ public class AddFriendMessage extends BmobIMExtraMessage {
             String extra = msg.getExtra();
             if (!TextUtils.isEmpty(extra)) {
                 JSONObject json = new JSONObject(extra);
+                IMLog.i("json:" + json);
                 String name = json.getString("name");
                 add.setName(name);
                 String avatar = json.getString("avatar");

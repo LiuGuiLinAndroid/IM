@@ -114,28 +114,31 @@ public class QueryFriendActivity extends BaseActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.btn_search:
-                if (mList != null) {
-                    if (mList.size() > 0) {
-                        mList.clear();
-                    }
-                }
-                String account = et_account.getText().toString().trim();
+                final String account = et_account.getText().toString().trim();
                 if (TextUtils.isEmpty(account)) {
                     CommonUtils.Toast(this, getString(R.string.str_toast_account_null));
                     return;
                 }
+                btn_search.setEnabled(false);
+                if (mList != null) {
+                    if (mList.size() > 0) {
+                        mList.clear();
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
                 IMLog.i("account:" + account);
-                IMSDK.queryFriend(account, new FindListener<IMUser>() {
+                IMSDK.queryFriend("username",account, new FindListener<IMUser>() {
                     @Override
                     public void done(List<IMUser> list, BmobException e) {
                         IMLog.i("list:" + list.size());
+                        btn_search.setEnabled(true);
                         if (e == null) {
                             if (list.size() > 0) {
                                 for (int i = 0; i < list.size(); i++) {
                                     IMUser imUser = list.get(i);
                                     IMLog.i(imUser.toString());
                                     //过滤自己
-                                    if(!imUser.getNickname().equals(IMSDK.getCurrentUser().getUsername())){
+                                    if(!imUser.getUsername().equals(IMSDK.getCurrentUser().getUsername())){
                                         mList.add(imUser);
                                     }
                                 }

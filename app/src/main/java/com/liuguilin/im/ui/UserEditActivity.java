@@ -25,6 +25,7 @@ import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
 import com.liuguilin.im.utils.PictureUtils;
 import com.liuguilin.im.view.DialogView;
+import com.liuguilin.im.view.LodingView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -88,6 +89,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
 
         initPhotoDialog();
         initSexDialog();
+        LodingView.getInstance().initView(this);
 
         include_title_iv_back = (RelativeLayout) findViewById(R.id.include_title_iv_back);
         include_title_text = (TextView) findViewById(R.id.include_title_text);
@@ -254,11 +256,14 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void updateUser(IMUser imUser) {
+        LodingView.getInstance().show();
         IMSDK.updateUser(imUser, new UpdateListener() {
             @Override
             public void done(BmobException e) {
+                LodingView.getInstance().hide();
                 if (e == null) {
                     CommonUtils.Toast(UserEditActivity.this, getString(R.string.str_toast_save_success));
+                    finish();
                 } else {
                     IMLog.e(e.toString());
                     CommonUtils.Toast(UserEditActivity.this, getString(R.string.str_toast_save_fail));

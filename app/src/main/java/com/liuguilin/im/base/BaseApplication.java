@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.liuguilin.im.receiver.IMHandlerReceiver;
 
+import org.litepal.LitePalApplication;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -17,7 +19,7 @@ import cn.bmob.newim.BmobIM;
  * Email: lgl@szokl.com.cn
  * Profile: Base App
  */
-public class BaseApplication extends Application {
+public class BaseApplication extends LitePalApplication {
 
     @Override
     public void onCreate() {

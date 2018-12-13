@@ -16,9 +16,9 @@
         android:layout_weight="1" />
 
     <LinearLayout
-        android:background="@color/color_white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/color_white"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -29,12 +29,31 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_margin="5dp"
-                android:id="@+id/iv_session"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/img_session_a" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_session"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/img_session_a" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/tv_unread_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/img_red_point"
+                    android:gravity="center"
+                    android:textColor="@color/color_white"
+                    android:textSize="8dp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tv_session"
@@ -54,10 +73,10 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_margin="5dp"
                 android:id="@+id/iv_friend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:src="@drawable/img_firend_a" />
 
             <TextView
@@ -78,10 +97,10 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_margin="5dp"
                 android:id="@+id/iv_news"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:src="@drawable/img_news_a" />
 
             <TextView
@@ -101,12 +120,28 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_margin="5dp"
-                android:id="@+id/iv_me"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/img_me_a" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_me"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/img_me_a" />
+
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/iv_new_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/img_red_point_small" />
+
+            </RelativeLayout>
+
 
             <TextView
                 android:id="@+id/tv_me"

@@ -28,4 +28,8 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     //Glide
     implementation 'com.github.bumptech.glide:glide:3.7.0'
+    //Litepal
+    implementation 'org.litepal.android:java:3.0.0'
+    //Eventbus
+    implementation 'org.greenrobot:eventbus:3.1.1'
 }

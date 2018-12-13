@@ -80,6 +80,14 @@
             android:textColor="@color/color_black" />
 
         <ImageView
+            android:visibility="gone"
+            android:id="@+id/iv_new_firend_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/img_red_point_small" />
+
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/img_user_arrow" />

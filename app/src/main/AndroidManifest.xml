@@ -104,6 +104,9 @@
         <!--添加好友-->
         <activity android:name=".ui.AddFriendActivity" />
 
+        <!--新好友-->
+        <activity android:name=".ui.NewFriendActivity" />
+
         <!--聊天-->
         <activity android:name=".ui.ChatActivity" />
 

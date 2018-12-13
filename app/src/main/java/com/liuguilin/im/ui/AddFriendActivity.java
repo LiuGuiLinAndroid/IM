@@ -57,7 +57,6 @@ public class AddFriendActivity extends BaseActivity implements View.OnClickListe
         title_right_text.setText(getString(R.string.str_common_commit));
 
         info = UserInfoActivity.info;
-        IMLog.e(info.toString() + " " + info.getName());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.liuguilin.im.im;
 
+import org.litepal.crud.LitePalSupport;
+
 /**
  * FileName: NewFriend
  * Founder: LiuGuiLin
@@ -7,7 +9,7 @@ package com.liuguilin.im.im;
  * Email: lgl@szokl.com.cn
  * Profile:
  */
-public class NewFriend {
+public class NewFriend extends LitePalSupport{
 
     private Long id;
     //用户uid
@@ -77,5 +79,18 @@ public class NewFriend {
 
     public void setTime(Long time) {
         this.time = time;
+    }
+
+    @Override
+    public String toString() {
+        return "NewFriend{" +
+                "id=" + id +
+                ", uid='" + uid + '\'' +
+                ", msg='" + msg + '\'' +
+                ", name='" + name + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", status=" + status +
+                ", time=" + time +
+                '}';
     }
 }

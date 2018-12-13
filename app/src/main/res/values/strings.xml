@@ -66,6 +66,13 @@
     <string name="str_user_info_dialog_error">用户信息出错</string>
     <string name="str_user_info_momo">陌生人聊天</string>
 
+    <!--新朋友-->
+    <string name="str_new_friend_unread">未读</string>
+    <string name="str_new_friend_read">已读</string>
+    <string name="str_new_friend_add">已添加</string>
+    <string name="str_new_friend_unadd">已拒绝</string>
+    <string name="str_new_friend_age">同意</string>
+
     <!--Toast-->
     <string name="str_toast_account_null">账户不能为空</string>
     <string name="str_toast_pw_null">密码不能为空</string>
@@ -87,6 +94,7 @@
     <string name="str_common_confirm">确定</string>
     <string name="str_common_cancel">取消</string>
     <string name="str_common_save">保存</string>
+    <string name="str_common_delete">刪除</string>
     <string name="str_common_commit">提交</string>
     <string name="str_common_boy">男</string>
     <string name="str_common_girl">女</string>

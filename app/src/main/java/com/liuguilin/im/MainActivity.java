@@ -12,19 +12,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.liuguilin.im.entity.Constants;
+import com.liuguilin.im.event.EventManager;
+import com.liuguilin.im.event.MessageEvent;
 import com.liuguilin.im.fragment.FriendFragment;
 import com.liuguilin.im.fragment.MeFragment;
 import com.liuguilin.im.fragment.NewsFragment;
 import com.liuguilin.im.fragment.SessionFragment;
-import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.service.IMService;
 import com.liuguilin.im.ui.QueryFriendActivity;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.view.DialogView;
 
-import cn.bmob.newim.BmobIM;
-import cn.bmob.newim.bean.BmobIMConversation;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -60,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tv_more_link;
     private TextView tv_add_friend;
     private TextView tv_scan;
+    private TextView tv_unread_size;
+    private ImageView iv_new_msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         iv_me = (ImageView) findViewById(R.id.iv_me);
         tv_me = (TextView) findViewById(R.id.tv_me);
         ll_me = (LinearLayout) findViewById(R.id.ll_me);
+
+        tv_unread_size = (TextView) findViewById(R.id.tv_unread_size);
+        iv_new_msg = (ImageView) findViewById(R.id.iv_new_msg);
 
         title_right_text.setOnClickListener(this);
         ll_session.setOnClickListener(this);
@@ -285,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.tv_add_friend:
                 DialogManager.getInstance().hide(mMenuDialog);
-                CommonUtils.startActivity(this,QueryFriendActivity.class,false);
+                CommonUtils.startActivity(this, QueryFriendActivity.class, false);
                 break;
             case R.id.tv_scan:
                 DialogManager.getInstance().hide(mMenuDialog);
@@ -301,6 +308,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.ll_me:
                 checkMainTab(3);
+                break;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        switch (event.getType()) {
+            case EventManager.EVENT_TYPE_NEW_FIREND:
+                iv_new_msg.setVisibility(View.VISIBLE);
+                break;
+            case EventManager.EVENT_TYPE_NEW_FIREND_UN:
+                iv_new_msg.setVisibility(View.GONE);
                 break;
         }
     }

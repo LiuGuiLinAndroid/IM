@@ -20,6 +20,7 @@ import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.IMLog;
 import com.liuguilin.im.view.DialogView;
+import com.liuguilin.im.view.LodingView;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
@@ -74,6 +75,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void initDialog() {
+
+        LodingView.getInstance().initView(this);
+
         mLoginQuestionDialog = DialogManager.getInstance().initView(this, R.layout.dialog_login_question, Gravity.BOTTOM);
 
         tv_reg_user = (TextView) mLoginQuestionDialog.findViewById(R.id.tv_reg_user);
@@ -122,9 +126,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             CommonUtils.Toast(this, getString(R.string.str_toast_pw_null));
             return;
         }
+        LodingView.getInstance().show();
         IMSDK.login(account, pw, new SaveListener<IMUser>() {
             @Override
             public void done(IMUser imUser, BmobException e) {
+                LodingView.getInstance().hide();
                 if (e == null) {
                     Constants.isLogin = true;
                     CommonUtils.Toast(LoginActivity.this, getString(R.string.str_login_success));
