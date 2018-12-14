@@ -31,7 +31,11 @@
     <!--我 - 上边距 -->
     <dimen name="size_me_top_pading">28.0px</dimen>
     <!--我 - 姓名大小 -->
-    <dimen name="size_me_name_text_size">42.0px</dimen>
+    <dimen name="size_me_name_text_size">70.0px</dimen>
+    <!--我 - 姓名大小 -->
+    <dimen name="size_me_name_account_size">42.0px</dimen>
+    <!--我 - 备注高度 -->
+    <dimen name="size_me_desc_height">210.0px</dimen>
 
     <!--编辑用户 - 上边距 -->
     <dimen name="size_user_edit_top_pading">28.0px</dimen>

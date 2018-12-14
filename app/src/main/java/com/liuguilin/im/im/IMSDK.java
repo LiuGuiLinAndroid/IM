@@ -1,7 +1,9 @@
 package com.liuguilin.im.im;
 
+import android.content.Context;
 import android.text.TextUtils;
 
+import com.liuguilin.im.R;
 import com.liuguilin.im.entity.Constants;
 import com.liuguilin.im.utils.IMLog;
 
@@ -215,6 +217,18 @@ public class IMSDK {
     }
 
     /**
+     * 查询好友列表
+     * @param listener
+     */
+    public static void queryFriends(FindListener<Friend> listener) {
+        BmobQuery<Friend> query = new BmobQuery<>();
+        IMUser imUser = getCurrentUser();
+        query.addWhereEqualTo("imUser", imUser);
+        query.findObjects(listener);
+    }
+
+
+    /**
      * 发送添加好友消息
      *
      * @param info     会话
@@ -241,6 +255,29 @@ public class IMSDK {
             msg.setExtraMap(map);
             messageManager.sendMessage(msg, listener);
         }
+    }
+
+    /**
+     * 发送同意添加好友的消息
+     *
+     * @param mContext
+     * @param add
+     * @param listener
+     */
+    public static void sendAgreeAddFriendMessage(Context mContext, NewFriend add, MessageSendListener listener) {
+        //临时会话
+        BmobIMUserInfo info = new BmobIMUserInfo(add.getUid(), add.getName(), add.getAvatar());
+        BmobIMConversation conversationEntrance = BmobIM.getInstance().startPrivateConversation(info, true, null);
+        BmobIMConversation messageManager = BmobIMConversation.obtain(BmobIMClient.getInstance(), conversationEntrance);
+        AgreeAddFriendMessage msg = new AgreeAddFriendMessage();
+        IMUser imUser = getCurrentUser();
+        msg.setContent(mContext.getString(R.string.str_add_friend_desc));
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", imUser.getUsername() + mContext.getString(R.string.str_add_friend_msg));
+        map.put("uid", add.getUid());
+        map.put("time", add.getTime());
+        msg.setExtraMap(map);
+        messageManager.sendMessage(msg, listener);
     }
 
     /**
@@ -285,13 +322,13 @@ public class IMSDK {
                             }
                         }
                     });
-                }else {
+                } else {
                     listener.done(null);
                 }
-            }else {
+            } else {
                 listener.done(null);
             }
-        }else {
+        } else {
             listener.done(null);
         }
     }
@@ -301,6 +338,19 @@ public class IMSDK {
      */
     public interface OnResultListener {
         void done(BmobException e);
+    }
+
+    /**
+     * 添加好友
+     *
+     * @param imUserFriend
+     * @param listener
+     */
+    public static void addFriend(IMUser imUserFriend, SaveListener<String> listener) {
+        Friend friend = new Friend();
+        friend.setImUser(getCurrentUser());
+        friend.setImUserFriend(imUserFriend);
+        friend.save(listener);
     }
 }
 

@@ -1,5 +1,6 @@
 package com.liuguilin.im.ui;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,6 +21,7 @@ import com.liuguilin.im.db.DBHelper;
 import com.liuguilin.im.entity.Constants;
 import com.liuguilin.im.event.EventManager;
 import com.liuguilin.im.im.IMSDK;
+import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.im.NewFriend;
 import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.utils.IMLog;
@@ -27,6 +29,11 @@ import com.liuguilin.im.view.DialogView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.bmob.newim.bean.BmobIMMessage;
+import cn.bmob.newim.listener.MessageSendListener;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 
 /**
  * FileName: NewFriendActivity
@@ -90,7 +97,8 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
                     @Override
                     public void onClick(View v) {
                         if (model.getStatus() == Constants.MSG_READ) {
-                            //同意添加
+                            //发送同意消息
+                            agreeAddFriend(model);
                         }
                     }
                 });
@@ -115,6 +123,42 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
         getNewFriendList();
     }
 
+    /**
+     * 同意添加好友
+     *
+     * @param model
+     */
+    private void agreeAddFriend(final NewFriend model) {
+        //添加到好友列表
+        IMUser imUser = new IMUser();
+        imUser.setObjectId(model.getUid());
+        IMLog.i("uid:" + model.getUid());
+        IMSDK.addFriend(imUser, new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if (e == null) {
+                    IMSDK.sendAgreeAddFriendMessage(
+                            NewFriendActivity.this, model, new MessageSendListener() {
+                                @Override
+                                public void done(BmobIMMessage bmobIMMessage, BmobException e) {
+                                    if (e == null) {
+                                        //更新此条记录
+                                        model.setStatus(Constants.MSG_ADD);
+                                        DBHelper.update(model);
+                                        mAdapter.notifyDataSetChanged();
+                                        IMLog.i("add friend done");
+                                    } else {
+                                        IMLog.e(e.toString());
+                                    }
+                                }
+                            });
+                } else {
+                    IMLog.e(e.toString());
+                }
+            }
+        });
+    }
+
     private void initDeleteDialog() {
         mDeleteDialog = DialogManager.getInstance().initView(this, R.layout.dialog_delete, Gravity.CENTER);
         tv_delete = mDeleteDialog.findViewById(R.id.tv_delete);
@@ -134,7 +178,9 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
                 //自己的UID
                 IMLog.i(IMSDK.getCurrentUser().getObjectId() + "");
                 if (!newFriend.getUid().equals(IMSDK.getCurrentUser().getObjectId())) {
-                    newFriend.setStatus(Constants.MSG_READ);
+                    if (newFriend.getStatus() == Constants.MSG_UNREAD) {
+                        newFriend.setStatus(Constants.MSG_READ);
+                    }
                     DBHelper.update(newFriend);
                     //本帐号下的
                     mDateList.add(newFriend);
@@ -157,10 +203,14 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
                 finish();
                 break;
             case R.id.tv_delete:
-                if (DELETE_ID > 0) {
+                IMLog.i("DELETE_ID:" + DELETE_ID);
+                if (DELETE_ID >= 0) {
                     if (mDateList.size() > DELETE_ID) {
+                        IMLog.i("size:" + mDateList.size());
                         DBHelper.delete(mDateList.get(DELETE_ID));
                         mDateList.remove(DELETE_ID);
+                        mAdapter.notifyDataSetChanged();
+                        IMLog.i("delete msg");
                     }
                 }
                 DialogManager.getInstance().hide(mDeleteDialog);
@@ -189,16 +239,18 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
         switch (type) {
             case Constants.MSG_UNREAD:
                 tv.setText(getString(R.string.str_new_friend_unread));
+                tv.setBackgroundResource(android.R.color.transparent);
+                tv.setTextColor(Color.BLACK);
                 break;
             case Constants.MSG_READ:
                 tv.setText(getString(R.string.str_new_friend_age));
                 tv.setBackgroundResource(R.drawable.shape_all_button_bg);
+                tv.setTextColor(Color.WHITE);
                 break;
             case Constants.MSG_ADD:
                 tv.setText(getString(R.string.str_new_friend_add));
-                break;
-            case Constants.MSG_UNADD:
-                tv.setText(getString(R.string.str_new_friend_unadd));
+                tv.setBackgroundResource(android.R.color.transparent);
+                tv.setTextColor(Color.BLACK);
                 break;
         }
     }

@@ -35,9 +35,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -57,6 +58,22 @@
                 android:textColor="@color/color_black"
                 android:textSize="@dimen/size_me_name_account_size"
                 android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_qrcode"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:src="@drawable/img_qrcode" />
 
         </LinearLayout>
 
@@ -80,12 +97,12 @@
             android:textColor="@color/color_black" />
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/iv_new_firend_point"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
-            android:src="@drawable/img_red_point_small" />
+            android:src="@drawable/img_red_point_small"
+            android:visibility="gone" />
 
         <ImageView
             android:layout_width="wrap_content"

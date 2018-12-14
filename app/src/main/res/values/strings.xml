@@ -47,6 +47,7 @@
     <string name="str_user_edit_age">年龄:</string>
     <string name="str_user_edit_b">生日:</string>
     <string name="str_user_edit_phone">电话:</string>
+    <string name="str_user_edit_city">地区:</string>
     <string name="str_user_edit_camera">相机</string>
     <string name="str_user_edit_ablum">相册</string>
 
@@ -58,6 +59,9 @@
     <string name="str_add_friend_commit_title">验证申请</string>
     <string name="str_add_friend_send_success">好友请求发送成功，等待验证</string>
     <string name="str_add_friend_send_fail">请求失败</string>
+    <string name="str_add_friend_desc">我通过了你的好友验证请求，我们可以开始聊天了!</string>
+    <string name="str_add_friend_msg">同意添加你为好友</string>
+    <string name="str_add_friend_meto">我是</string>
 
     <!--用户信息-->
     <string name="str_user_info_title_text">用户信息</string>
@@ -72,6 +76,14 @@
     <string name="str_new_friend_add">已添加</string>
     <string name="str_new_friend_unadd">已拒绝</string>
     <string name="str_new_friend_age">同意</string>
+
+    <!--聊天-->
+    <string name="str_chat_voice_text">按住说话</string>
+    <string name="str_chat_more_camera">相机</string>
+    <string name="str_chat_more_album">相册</string>
+    <string name="str_chat_more_location">位置</string>
+    <string name="str_chat_more_file">文件</string>
+    <string name="str_chat_more_right_text">查看</string>
 
     <!--Toast-->
     <string name="str_toast_account_null">账户不能为空</string>
@@ -96,6 +108,7 @@
     <string name="str_common_save">保存</string>
     <string name="str_common_delete">刪除</string>
     <string name="str_common_commit">提交</string>
+    <string name="str_common_send">发送</string>
     <string name="str_common_boy">男</string>
     <string name="str_common_girl">女</string>
 

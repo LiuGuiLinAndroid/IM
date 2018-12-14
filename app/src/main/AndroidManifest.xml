@@ -110,6 +110,9 @@
         <!--聊天-->
         <activity android:name=".ui.ChatActivity" />
 
+        <!--二维码-->
+        <activity android:name=".ui.MyQrCodeActivity"/>
+
     </application>
 
 </manifest>

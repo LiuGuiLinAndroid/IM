@@ -4,6 +4,7 @@ import android.media.Image;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import com.liuguilin.im.event.EventManager;
 import com.liuguilin.im.event.MessageEvent;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
+import com.liuguilin.im.ui.MyQrCodeActivity;
 import com.liuguilin.im.ui.NewFriendActivity;
 import com.liuguilin.im.ui.UserEditActivity;
 import com.liuguilin.im.utils.CommonUtils;
@@ -38,7 +40,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Email: lgl@szokl.com.cn
  * Profile: 我
  */
-public class MeFragment extends BaseFragment implements View.OnClickListener {
+public class MeFragment extends BaseFragment implements View.OnClickListener, View.OnTouchListener {
 
     private CircleImageView iv_user;
     private TextView tv_niname;
@@ -47,6 +49,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     private LinearLayout ll_user;
     private LinearLayout ll_new_friend;
     private ImageView iv_new_firend_point;
+    private LinearLayout ll_qrcode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,9 +66,11 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         ll_user = (LinearLayout) view.findViewById(R.id.ll_user);
         iv_new_firend_point = (ImageView) view.findViewById(R.id.iv_new_firend_point);
         ll_new_friend = (LinearLayout) view.findViewById(R.id.ll_new_friend);
+        ll_qrcode = (LinearLayout) view.findViewById(R.id.ll_qrcode);
 
         ll_user.setOnClickListener(this);
         ll_new_friend.setOnClickListener(this);
+        ll_qrcode.setOnTouchListener(this);
 
         //逻辑部分
         updateUserInfo();
@@ -126,5 +131,15 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                 iv_new_firend_point.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId()) {
+            case R.id.ll_qrcode:
+                CommonUtils.startActivity(getActivity(), MyQrCodeActivity.class, false);
+                break;
+        }
+        return true;
     }
 }
