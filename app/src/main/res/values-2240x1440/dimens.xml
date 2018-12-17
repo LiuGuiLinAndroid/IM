@@ -31,9 +31,9 @@
     <!--我 - 上边距 -->
     <dimen name="size_me_top_pading">38.0px</dimen>
     <!--我 - 姓名大小 -->
-    <dimen name="size_me_name_text_size">95.0px</dimen>
+    <dimen name="size_me_name_text_size">76.0px</dimen>
     <!--我 - 姓名大小 -->
-    <dimen name="size_me_name_account_size">57.0px</dimen>
+    <dimen name="size_me_name_account_size">38.0px</dimen>
     <!--我 - 备注高度 -->
     <dimen name="size_me_desc_height">285.0px</dimen>
 
@@ -46,6 +46,12 @@
     <dimen name="size_add_friend_photo_height">228.0px</dimen>
     <!--添加好友 - Item高度 -->
     <dimen name="size_add_friend_item_height">285.0px</dimen>
+
+    <!--聊天-->
+    <dimen name="size_chat_photo_size">152.0px</dimen>
+
+    <!--朋友-->
+    <dimen name="size_friend_list_title_size">57.0px</dimen>
 
 </resources>
 

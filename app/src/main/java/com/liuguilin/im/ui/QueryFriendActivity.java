@@ -50,6 +50,7 @@ public class QueryFriendActivity extends BaseActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_query_friend);
+
         initView();
     }
 

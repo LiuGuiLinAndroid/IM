@@ -10,6 +10,8 @@ package com.liuguilin.im.event;
 public class MessageEvent {
 
     private int type;
+    //消息事件
+    private cn.bmob.newim.event.MessageEvent messageEvent;
 
     public int getType() {
         return type;
@@ -17,5 +19,13 @@ public class MessageEvent {
 
     public MessageEvent(int type) {
         this.type = type;
+    }
+
+    public cn.bmob.newim.event.MessageEvent getMessageEvent() {
+        return messageEvent;
+    }
+
+    public void setMessageEvent(cn.bmob.newim.event.MessageEvent messageEvent) {
+        this.messageEvent = messageEvent;
     }
 }

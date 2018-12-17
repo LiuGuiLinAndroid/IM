@@ -3,10 +3,14 @@ package com.liuguilin.im.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.liuguilin.im.manager.DialogManager;
+import com.liuguilin.im.ui.ChatActivity;
 import com.liuguilin.im.view.DialogView;
+
+import cn.bmob.newim.bean.BmobIMConversation;
 
 /**
  * FileName: CommonUtils
@@ -49,5 +53,18 @@ public class CommonUtils {
      */
     public static void Toast(Context mContext, String str) {
         Toast.makeText(mContext, str, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 传递一个常态对话入口
+     *
+     * @param conversationEntrance
+     */
+    public static void startActivityForBundle(Context mContext, BmobIMConversation conversationEntrance) {
+        Intent intent = new Intent(mContext, ChatActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("c", conversationEntrance);
+        intent.putExtra("bundle", bundle);
+        mContext.startActivity(intent);
     }
 }

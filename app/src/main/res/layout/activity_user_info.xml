@@ -145,4 +145,17 @@
         android:text="@string/str_user_info_momo"
         android:textColor="@color/color_white" />
 
+    <Button
+        android:visibility="gone"
+        android:id="@+id/btn_send_msg"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/size_login_button_top_pading"
+        android:layout_marginTop="@dimen/size_login_button_top_pading"
+        android:layout_marginRight="@dimen/size_login_button_top_pading"
+        android:background="@drawable/shape_all_button_bg"
+        android:text="@string/str_user_info_send_msg"
+        android:textColor="@color/color_white" />
+
 </LinearLayout>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,15 +19,21 @@ import com.liuguilin.im.fragment.FriendFragment;
 import com.liuguilin.im.fragment.MeFragment;
 import com.liuguilin.im.fragment.NewsFragment;
 import com.liuguilin.im.fragment.SessionFragment;
+import com.liuguilin.im.im.IMSDK;
+import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.service.IMService;
 import com.liuguilin.im.ui.QueryFriendActivity;
 import com.liuguilin.im.utils.CommonUtils;
+import com.liuguilin.im.utils.IMLog;
 import com.liuguilin.im.view.DialogView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -75,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
 
+        checkBindPhoto();
         initFragment();
         initMenuDialog();
 
@@ -114,6 +122,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         checkMainTab(0);
 
         CommonUtils.startService(this, IMService.class);
+    }
+
+    /**
+     * 检查绑定手机
+     */
+    private void checkBindPhoto() {
+        IMUser imUser = IMSDK.getCurrentUser();
+        String phone = imUser.getMobilePhoneNumber();
+        IMLog.i("photo:" + phone);
+        if (TextUtils.isEmpty(phone)) {
+            imUser.setMobilePhoneNumber(imUser.getUsername());
+            imUser.setMobilePhoneNumberVerified(true);
+            IMSDK.updateUser(imUser, new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+                    if (e != null) {
+                        IMLog.e(e.toString());
+                    }
+                }
+            });
+        }
     }
 
     private void initMenuDialog() {

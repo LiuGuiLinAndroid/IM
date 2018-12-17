@@ -90,7 +90,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener, Vi
             if (userFile != null) {
                 String url = userFile.getFileUrl();
                 if (!TextUtils.isEmpty(url)) {
-                    GlideUtils.loadImg(getActivity(), url, iv_user);
+                    GlideUtils.loadImg(getActivity(), url,R.drawable.img_def_photo, iv_user);
                 }
             }
             iv_sex.setImageResource(imUser.isSex() ? R.drawable.img_boy : R.drawable.img_girl);
@@ -135,8 +135,8 @@ public class MeFragment extends BaseFragment implements View.OnClickListener, Vi
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        switch (v.getId()) {
-            case R.id.ll_qrcode:
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
                 CommonUtils.startActivity(getActivity(), MyQrCodeActivity.class, false);
                 break;
         }

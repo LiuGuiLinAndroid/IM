@@ -20,10 +20,12 @@ import com.liuguilin.im.base.BaseActivity;
 import com.liuguilin.im.db.DBHelper;
 import com.liuguilin.im.entity.Constants;
 import com.liuguilin.im.event.EventManager;
+import com.liuguilin.im.im.Friend;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.im.NewFriend;
 import com.liuguilin.im.manager.DialogManager;
+import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.IMLog;
 import com.liuguilin.im.view.DialogView;
 
@@ -33,6 +35,7 @@ import java.util.List;
 import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.listener.MessageSendListener;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
@@ -96,6 +99,7 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
                 hodler.getSubView(R.id.btn_op).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        IMLog.i("status:" + model.getStatus());
                         if (model.getStatus() == Constants.MSG_READ) {
                             //发送同意消息
                             agreeAddFriend(model);
@@ -129,6 +133,55 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
      * @param model
      */
     private void agreeAddFriend(final NewFriend model) {
+        IMLog.i("agreeAddFriend");
+        //查询是否已经是好友
+        IMSDK.queryFriends(new FindListener<Friend>() {
+            @Override
+            public void done(List<Friend> list, BmobException e) {
+                if (e == null) {
+                    if (list != null && list.size() > 0) {
+                        boolean isFriend = false;
+                        for (int i = 0; i < list.size(); i++) {
+                            Friend friend = list.get(i);
+                            IMUser friendImUser = friend.getImUserFriend();
+                            //好友的所有Id
+                            String friendObjectId = friendImUser.getObjectId();
+                            IMLog.i("friendObjectId:" + friendObjectId);
+                            String id = String.valueOf(model.getId());
+                            IMLog.i("id:" + id);
+                            if (friendObjectId.equals(id)) {
+                                isFriend = true;
+                                break;
+                            }
+                        }
+                        IMLog.i("isFriend:" + isFriend);
+                        if (isFriend) {
+                            CommonUtils.Toast(NewFriendActivity.this, getString(R.string.str_toast_to_friend));
+                            model.setStatus(Constants.MSG_ADD);
+                            DBHelper.update(model);
+                            mAdapter.notifyDataSetChanged();
+                        } else {
+                            addFriend(model);
+                        }
+                    }else{
+                       IMLog.i("size null");
+                       //没有好友
+                        addFriend(model);
+                    }
+                } else {
+                    CommonUtils.Toast(NewFriendActivity.this, getString(R.string.str_toast_op_fail));
+                    IMLog.e(e.toString());
+                }
+            }
+        });
+    }
+
+    /**
+     * 添加好友
+     *
+     * @param model
+     */
+    private void addFriend(final NewFriend model) {
         //添加到好友列表
         IMUser imUser = new IMUser();
         imUser.setObjectId(model.getUid());
@@ -142,10 +195,13 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
                                 @Override
                                 public void done(BmobIMMessage bmobIMMessage, BmobException e) {
                                     if (e == null) {
+                                        IMLog.i("sendAgreeAddFriendMessage");
                                         //更新此条记录
                                         model.setStatus(Constants.MSG_ADD);
                                         DBHelper.update(model);
                                         mAdapter.notifyDataSetChanged();
+                                        //刷新好友
+                                        EventManager.post(EventManager.EVENT_TYPE_FRIEND_LIST);
                                         IMLog.i("add friend done");
                                     } else {
                                         IMLog.e(e.toString());
@@ -243,7 +299,7 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
                 tv.setTextColor(Color.BLACK);
                 break;
             case Constants.MSG_READ:
-                tv.setText(getString(R.string.str_new_friend_age));
+                tv.setText(getString(R.string.str_new_friend_ages));
                 tv.setBackgroundResource(R.drawable.shape_all_button_bg);
                 tv.setTextColor(Color.WHITE);
                 break;

@@ -18,6 +18,7 @@
     <string name="str_reg_pw">密码:</string>
     <string name="str_reg_code">验证码:</string>
     <string name="str_reg_get_code">获取验证码</string>
+    <string name="str_reg_no_desc">这个人很懒,什么都没有留下!</string>
 
     <!--忘记密码-->
     <string name="str_forget_tips">温馨提示:绑定手机才可支持修改密码</string>
@@ -69,13 +70,14 @@
     <string name="str_user_info_desc">个性签名</string>
     <string name="str_user_info_dialog_error">用户信息出错</string>
     <string name="str_user_info_momo">陌生人聊天</string>
+    <string name="str_user_info_send_msg">发消息</string>
 
     <!--新朋友-->
     <string name="str_new_friend_unread">未读</string>
     <string name="str_new_friend_read">已读</string>
     <string name="str_new_friend_add">已添加</string>
     <string name="str_new_friend_unadd">已拒绝</string>
-    <string name="str_new_friend_age">同意</string>
+    <string name="str_new_friend_ages">同意</string>
 
     <!--聊天-->
     <string name="str_chat_voice_text">按住说话</string>
@@ -85,7 +87,14 @@
     <string name="str_chat_more_file">文件</string>
     <string name="str_chat_more_right_text">查看</string>
 
+    <!--二维码-->
+    <string name="str_qrcode_title_text">二维码名片</string>
+
     <!--Toast-->
+    <string name="str_toast_to_friend">你们已经是好友了!</string>
+    <string name="str_toast_op_success">操作成功</string>
+    <string name="str_toast_op_fail">操作失败</string>
+
     <string name="str_toast_account_null">账户不能为空</string>
     <string name="str_toast_pw_null">密码不能为空</string>
     <string name="str_toast_phone_null">电话不能为空</string>
@@ -99,6 +108,11 @@
     <string name="str_toast_reset_fail">重置失败</string>
     <string name="str_toast_save_success">保存成功</string>
     <string name="str_toast_save_fail">保存失败</string>
+    <string name="str_toast_delete_success">删除成功</string>
+    <string name="str_toast_delete_fail">删除失败</string>
+
+    <string name="str_toast_quest_friend">请求添加好友</string>
+    <string name="str_toast_agree_friend">同意添加好友</string>
 
     <string name="str_toast_code_error">验证码错误</string>
 

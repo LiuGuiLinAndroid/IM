@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
+import com.liuguilin.im.MainActivity;
 import com.liuguilin.im.R;
+import com.liuguilin.im.im.IMSDK;
+import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.utils.CommonUtils;
 
 /**
@@ -24,7 +27,13 @@ public class IndexActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                CommonUtils.startActivity(IndexActivity.this, LoginActivity.class, true);
+                IMUser imUser = IMSDK.getCurrentUser();
+                if (imUser != null) {
+                    CommonUtils.startActivity(IndexActivity.this, MainActivity.class, true);
+                }else {
+                    //判断是否第一次
+                    CommonUtils.startActivity(IndexActivity.this, LoginActivity.class, true);
+                }
             }
         }, 1500);
     }

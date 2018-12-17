@@ -145,7 +145,7 @@ public class RegUserActivity extends BaseActivity implements View.OnClickListene
      */
     private void regUser(String phone, String pw) {
         //注册
-        IMSDK.regUser(phone, pw, new SaveListener<IMUser>() {
+        IMSDK.regUser(this, phone, pw, new SaveListener<IMUser>() {
             @Override
             public void done(IMUser imUser, BmobException e) {
                 if (e == null) {

@@ -32,7 +32,7 @@ public class BaseApplication extends LitePalApplication {
         //init Bmob
         if (getApplicationInfo().packageName.equals(getMyProcessName())){
             BmobIM.init(this);
-            BmobIM.registerDefaultMessageHandler(new IMHandlerReceiver());
+            BmobIM.registerDefaultMessageHandler(new IMHandlerReceiver(this));
         }
     }
 

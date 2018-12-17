@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.liuguilin.im.R;
 import com.liuguilin.im.base.BaseActivity;
@@ -55,10 +56,16 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
     private CircleImageView iv_photo;
     private LinearLayout ll_select_photo;
     private EditText et_nickname;
-    private EditText et_sex;
+    private TextView tv_sex;
     private EditText et_age;
-    private EditText et_birthday;
+    private TextView tv_birthday;
     private EditText et_phone;
+    private EditText et_desc;
+    private TextView tv_city;
+
+    private LinearLayout ll_birthday;
+    private LinearLayout ll_city;
+    private LinearLayout ll_sex;
 
     private DialogView mPhotoDialog;
     private TextView tv_camera;
@@ -99,15 +106,23 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
         ll_select_photo = (LinearLayout) findViewById(R.id.ll_select_photo);
 
         et_nickname = (EditText) findViewById(R.id.et_nickname);
-        et_sex = (EditText) findViewById(R.id.et_sex);
+        tv_sex = (TextView) findViewById(R.id.tv_sex);
         et_age = (EditText) findViewById(R.id.et_age);
-        et_birthday = (EditText) findViewById(R.id.et_birthday);
+        tv_birthday = (TextView) findViewById(R.id.tv_birthday);
         et_phone = (EditText) findViewById(R.id.et_phone);
+        et_desc = (EditText) findViewById(R.id.et_desc);
+        tv_city = (TextView) findViewById(R.id.tv_city);
+
+        ll_birthday = (LinearLayout) findViewById(R.id.ll_birthday);
+        ll_city = (LinearLayout) findViewById(R.id.ll_city);
+        ll_sex = (LinearLayout) findViewById(R.id.ll_sex);
 
         include_title_iv_back.setOnClickListener(this);
         ll_select_photo.setOnClickListener(this);
         title_right_text.setOnClickListener(this);
-        et_sex.setOnClickListener(this);
+        ll_sex.setOnClickListener(this);
+        ll_birthday.setOnClickListener(this);
+        ll_city.setOnClickListener(this);
 
         //逻辑部分
         include_title_text.setText(getString(R.string.str_user_edit_user));
@@ -124,7 +139,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
             if (bmobFile != null) {
                 String fileUrl = bmobFile.getFileUrl();
                 if (!TextUtils.isEmpty(fileUrl)) {
-                    GlideUtils.loadImg(this, fileUrl, iv_photo);
+                    GlideUtils.loadImg(this, fileUrl,R.drawable.img_def_photo, iv_photo);
                 }
             }
             String nickName = imUser.getNickname();
@@ -132,17 +147,19 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                 et_nickname.setText(nickName);
             }
             boolean sex = imUser.isSex();
-            et_sex.setText(sex ? getString(R.string.str_common_boy) : getString(R.string.str_common_girl));
+            tv_sex.setText(sex ? getString(R.string.str_common_boy) : getString(R.string.str_common_girl));
             int age = imUser.getAge();
             et_age.setText(String.valueOf(age));
             String birthday = imUser.getBirthday();
             if (!TextUtils.isEmpty(birthday)) {
-                et_birthday.setText(birthday);
+                tv_birthday.setText(birthday);
             }
             String phone = imUser.getPhone();
             if (!TextUtils.isEmpty(phone)) {
-                et_birthday.setText(phone);
+                tv_birthday.setText(phone);
             }
+            et_desc.setText(imUser.getDesc());
+            et_phone.setText(imUser.getUsername());
         }
     }
 
@@ -194,19 +211,25 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
             case R.id.tv_cancel:
                 DialogManager.getInstance().hide(mPhotoDialog);
                 break;
-            case R.id.et_sex:
-                DialogManager.getInstance().show(mSexDialog);
-                break;
             case R.id.tv_boy:
                 DialogManager.getInstance().hide(mSexDialog);
-                et_sex.setText(getString(R.string.str_common_boy));
+                tv_sex.setText(getString(R.string.str_common_boy));
                 break;
             case R.id.tv_girl:
                 DialogManager.getInstance().hide(mSexDialog);
-                et_sex.setText(getString(R.string.str_common_girl));
+                tv_sex.setText(getString(R.string.str_common_girl));
                 break;
             case R.id.tv_sex_cancel:
                 DialogManager.getInstance().hide(mSexDialog);
+                break;
+            case R.id.ll_sex:
+                DialogManager.getInstance().show(mSexDialog);
+                break;
+            case R.id.ll_birthday:
+                Toast.makeText(this, "ll_birthday", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.ll_city:
+                Toast.makeText(this, "ll_city", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -216,10 +239,12 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
      */
     private void saveUserInfo() {
         String nickName = et_nickname.getText().toString().trim();
-        String sex = et_sex.getText().toString().trim();
+        String sex = tv_sex.getText().toString().trim();
         String age = et_age.getText().toString().trim();
-        String birthday = et_birthday.getText().toString().trim();
+        String birthday = tv_birthday.getText().toString().trim();
         String phone = et_phone.getText().toString().trim();
+        String desc = et_desc.getText().toString().trim();
+        String city = tv_city.getText().toString().trim();
 
         final IMUser imUser = IMSDK.getCurrentUser();
         if (!TextUtils.isEmpty(nickName)) {
@@ -236,6 +261,12 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
         }
         if (!TextUtils.isEmpty(phone)) {
             imUser.setPhone(birthday);
+        }
+        if (!TextUtils.isEmpty(desc)) {
+            imUser.setDesc(desc);
+        }
+        if (!TextUtils.isEmpty(city)) {
+            imUser.setCity(city);
         }
         if (uploadPhotoFile != null) {
             final BmobFile file = new BmobFile(uploadPhotoFile);

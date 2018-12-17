@@ -47,6 +47,7 @@
 
         <!--个性签名-->
         <EditText
+            android:id="@+id/et_desc"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_me_desc_height"
             android:layout_margin="10dp"
@@ -95,6 +96,7 @@
 
         <!--性别-->
         <LinearLayout
+            android:id="@+id/ll_sex"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_all_et_height"
             android:background="@color/color_white"
@@ -109,16 +111,15 @@
                 android:text="@string/str_user_edit_sex"
                 android:textColor="@color/color_black" />
 
-            <EditText
-                android:id="@+id/et_sex"
+            <TextView
+                android:id="@+id/tv_sex"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@null"
-                android:focusable="false"
                 android:gravity="right|center_vertical"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:paddingRight="10dp"
+                android:textColor="@color/color_black" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -190,15 +191,15 @@
                 android:text="@string/str_user_edit_b"
                 android:textColor="@color/color_black" />
 
-            <EditText
-                android:id="@+id/et_birthday"
+            <TextView
+                android:id="@+id/tv_birthday"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@null"
                 android:gravity="right|center_vertical"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:paddingRight="10dp"
+                android:textColor="@color/color_black" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -235,10 +236,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@null"
+                android:enabled="false"
                 android:gravity="right|center_vertical"
                 android:inputType="number"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:paddingRight="10dp"
+                android:textColor="@color/color_black" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -270,16 +273,15 @@
                 android:text="@string/str_user_edit_city"
                 android:textColor="@color/color_black" />
 
-            <EditText
-                android:id="@+id/et_city"
+            <TextView
+                android:id="@+id/tv_city"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@null"
                 android:gravity="right|center_vertical"
-                android:inputType="number"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:paddingRight="10dp"
+                android:textColor="@color/color_black" />
 
             <ImageView
                 android:layout_width="wrap_content"

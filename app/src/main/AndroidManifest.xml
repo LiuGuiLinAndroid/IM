@@ -17,9 +17,9 @@
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/img_app_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/img_app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
@@ -93,7 +93,9 @@
         <activity android:name=".ui.ForgetPwActivity" />
 
         <!--编辑信息-->
-        <activity android:name=".ui.UserEditActivity" />
+        <activity
+            android:name=".ui.UserEditActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
 
         <!--查询好友-->
         <activity android:name=".ui.QueryFriendActivity" />
@@ -111,7 +113,7 @@
         <activity android:name=".ui.ChatActivity" />
 
         <!--二维码-->
-        <activity android:name=".ui.MyQrCodeActivity"/>
+        <activity android:name=".ui.MyQrCodeActivity" />
 
     </application>
 

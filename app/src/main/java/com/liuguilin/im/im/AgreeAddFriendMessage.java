@@ -27,7 +27,7 @@ public class AgreeAddFriendMessage extends BmobIMExtraMessage {
     //用于通知栏显示的内容
     private String msg;
 
-    public AgreeAddFriendMessage(){
+    public AgreeAddFriendMessage() {
 
     }
 
@@ -71,6 +71,7 @@ public class AgreeAddFriendMessage extends BmobIMExtraMessage {
 
     /**
      * 消息转换
+     *
      * @param msg
      * @return
      */
@@ -87,10 +88,10 @@ public class AgreeAddFriendMessage extends BmobIMExtraMessage {
                 agree.setUid(uid);
                 agree.setTime(time);
             } else {
-                IMLog.e("extra null");
+                IMLog.i("extra null");
             }
         } catch (Exception e) {
-            IMLog.e(e.toString());
+            e.printStackTrace();
         }
         return agree;
     }

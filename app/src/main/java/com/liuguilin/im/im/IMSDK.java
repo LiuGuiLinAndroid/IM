@@ -1,10 +1,15 @@
 package com.liuguilin.im.im;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
+import com.liuguilin.im.MainActivity;
 import com.liuguilin.im.R;
 import com.liuguilin.im.entity.Constants;
+import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
 
 import java.util.HashMap;
@@ -21,6 +26,8 @@ import cn.bmob.newim.event.MessageEvent;
 import cn.bmob.newim.listener.ConnectListener;
 import cn.bmob.newim.listener.ConnectStatusChangeListener;
 import cn.bmob.newim.listener.MessageSendListener;
+import cn.bmob.newim.listener.MessagesQueryListener;
+import cn.bmob.newim.notification.BmobNotificationManager;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.BmobUser;
@@ -108,10 +115,11 @@ public class IMSDK {
      * @param password 密码
      * @param listener 回调
      */
-    public static void regUser(String username, String password, SaveListener<IMUser> listener) {
+    public static void regUser(Context mContext, String username, String password, SaveListener<IMUser> listener) {
         IMUser imUser = new IMUser();
         imUser.setUsername(username);
         imUser.setPassword(password);
+        imUser.setDesc(mContext.getString(R.string.str_reg_no_desc));
         imUser.signUp(listener);
     }
 
@@ -218,6 +226,7 @@ public class IMSDK {
 
     /**
      * 查询好友列表
+     *
      * @param listener
      */
     public static void queryFriends(FindListener<Friend> listener) {
@@ -351,6 +360,51 @@ public class IMSDK {
         friend.setImUser(getCurrentUser());
         friend.setImUserFriend(imUserFriend);
         friend.save(listener);
+    }
+
+    /**
+     * 查询指定会话的聊天记录
+     *
+     * @param mConversationManager
+     * @param msg
+     * @param listener
+     */
+    public static void queryMessage(BmobIMConversation mConversationManager, BmobIMMessage msg, MessagesQueryListener listener) {
+        mConversationManager.queryMessages(msg, 10, listener);
+    }
+
+    /**
+     * 刪除好友
+     *
+     * @param f
+     * @param listener
+     */
+    public static void deleteFriend(Friend f, UpdateListener listener) {
+        Friend friend = new Friend();
+        friend.delete(f.getObjectId(), listener);
+    }
+
+    /**
+     * 显示通知
+     *
+     * @param mContext 上下文
+     * @param cls      跳转
+     * @param mBitmap  头像
+     * @param title
+     * @param msg
+     * @param content
+     */
+    public static void showNotificaition(Context mContext, Class<?> cls, Bitmap mBitmap, String title, String msg, String content) {
+        Intent pendingIntent = new Intent(mContext, cls);
+        pendingIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        BmobNotificationManager.getInstance(mContext).showNotification(mBitmap, title, msg, content, pendingIntent);
+    }
+
+    /**
+     * 退出登录
+     */
+    public static void exitUser() {
+        BmobUser.logOut();
     }
 }
 

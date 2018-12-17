@@ -23,3 +23,7 @@
 ```java
     style="?android:attr/borderlessButtonStyle"
 ```
+
+## 逻辑
+
+- 1.删除好友时应该增加自定义消息让对方也删除，而不是成为单方面好友关系

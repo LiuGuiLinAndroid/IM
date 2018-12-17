@@ -14,14 +14,17 @@ import android.widget.TextView;
 import com.liuguilin.im.R;
 import com.liuguilin.im.base.BaseActivity;
 import com.liuguilin.im.im.AddFriendMessage;
+import com.liuguilin.im.im.Friend;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.GlideUtils;
+import com.liuguilin.im.utils.IMLog;
 import com.liuguilin.im.view.DialogView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.bmob.newim.BmobIM;
@@ -31,6 +34,8 @@ import cn.bmob.newim.core.BmobIMClient;
 import cn.bmob.newim.listener.MessageSendListener;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -50,6 +55,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
     private TextView tv_account;
     private Button btn_add;
     private Button btn_momo;
+    private Button btn_send_msg;
 
     private DialogView mErrorDialog;
     private TextView tv_content;
@@ -59,6 +65,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 
     //用戶信息
     public static BmobIMUserInfo info;
+    private BmobIMConversation conversationEntrance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +85,12 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
         tv_desc = (TextView) findViewById(R.id.tv_desc);
         btn_add = (Button) findViewById(R.id.btn_add);
         btn_momo = (Button) findViewById(R.id.btn_momo);
+        btn_send_msg = (Button) findViewById(R.id.btn_send_msg);
 
         include_title_iv_back.setOnClickListener(this);
         btn_add.setOnClickListener(this);
         btn_momo.setOnClickListener(this);
+        btn_send_msg.setOnClickListener(this);
 
         //逻辑
         include_title_text.setText(getString(R.string.str_user_info_title_text));
@@ -89,11 +98,41 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
         initErrorDialog();
 
         if (QueryFriendActivity.mClickimUser != null) {
+
             String nickName = QueryFriendActivity.mClickimUser.getNickname();
             if (!TextUtils.isEmpty(nickName)) {
                 tv_niname.setText(nickName);
             }
-            tv_account.setText(QueryFriendActivity.mClickimUser.getUsername());
+            String userName = QueryFriendActivity.mClickimUser.getUsername();
+            tv_account.setText(userName);
+
+            final String objectId = QueryFriendActivity.mClickimUser.getObjectId();
+            IMLog.i("objectId:" + objectId);
+            //查询
+            IMSDK.queryFriends(new FindListener<Friend>() {
+                @Override
+                public void done(List<Friend> list, BmobException e) {
+                    if (e == null) {
+                        if (list != null && list.size() > 0) {
+                            for (int i = 0; i < list.size(); i++) {
+                                Friend friend = list.get(i);
+                                IMUser imUserFriend = friend.getImUserFriend();
+                                String friendObjectId = imUserFriend.getObjectId();
+                                IMLog.i("friendObjectId:" + friendObjectId);
+                                if (friendObjectId.equals(objectId)) {
+                                    //存在好友关系
+                                    btn_send_msg.setVisibility(View.VISIBLE);
+                                    btn_add.setVisibility(View.GONE);
+                                    btn_momo.setVisibility(View.GONE);
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        IMLog.e(e.toString());
+                    }
+                }
+            });
 
             iv_sex.setImageResource(QueryFriendActivity.mClickimUser.isSex() ? R.drawable.img_boy : R.drawable.img_girl);
 
@@ -101,7 +140,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
             if (bmobFile != null) {
                 String fileUrl = bmobFile.getFileUrl();
                 if (!TextUtils.isEmpty(fileUrl)) {
-                    GlideUtils.loadImg(this, fileUrl, iv_user);
+                    GlideUtils.loadImg(this, fileUrl,R.drawable.img_def_photo, iv_user);
                 } else {
                     iv_user.setImageResource(R.drawable.img_def_photo);
                 }
@@ -122,6 +161,8 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
                     QueryFriendActivity.mClickimUser.getObjectId(),
                     QueryFriendActivity.mClickimUser.getUsername(),
                     QueryFriendActivity.mClickimUser.getAvatar() == null ? "" : QueryFriendActivity.mClickimUser.getAvatar().getFileUrl());
+            //构建聊天室
+            conversationEntrance = BmobIM.getInstance().startPrivateConversation(info, null);
         } else {
             DialogManager.getInstance().show(mErrorDialog);
         }
@@ -149,17 +190,14 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
                 DialogManager.getInstance().hide(mErrorDialog);
                 break;
             case R.id.btn_add:
-                CommonUtils.startActivity(this,AddFriendActivity.class,false);
+                CommonUtils.startActivity(this, AddFriendActivity.class, false);
                 break;
             case R.id.btn_momo:
-
+                CommonUtils.startActivityForBundle(this,conversationEntrance);
+                break;
+            case R.id.btn_send_msg:
+                CommonUtils.startActivityForBundle(this,conversationEntrance);
                 break;
         }
-    }
-
-    private void startActivityForBundle(Class<?> cls) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("info", info);
-        startActivity(new Intent(this, cls), bundle);
     }
 }

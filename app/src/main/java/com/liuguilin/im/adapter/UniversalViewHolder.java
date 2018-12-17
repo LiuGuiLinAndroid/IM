@@ -76,7 +76,7 @@ public class UniversalViewHolder extends RecyclerView.ViewHolder {
     public UniversalViewHolder setImageUrl(Context mContext, int viewId, String url) {
         ImageView iv = getSubView(viewId);
         if (!TextUtils.isEmpty(url)) {
-            GlideUtils.loadImg(mContext, url, iv);
+            GlideUtils.loadImg(mContext, url,R.drawable.img_def_photo, iv);
         }
         return this;
     }
