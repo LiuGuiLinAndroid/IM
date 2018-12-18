@@ -31,10 +31,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_black"
-                android:textSize="@dimen/size_me_name_text_size"
+                android:textSize="@dimen/size_friend_list_title_size"
                 android:textStyle="bold" />
 
             <TextView
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
                 android:id="@+id/tv_msg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,7 +59,7 @@
                 android:id="@+id/tv_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="022"
+                android:layout_marginRight="5dp"
                 android:textColor="@color/color_black" />
 
             <TextView

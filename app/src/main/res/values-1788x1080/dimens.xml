@@ -2,7 +2,7 @@
 <resources>
 
     <!--顶部 - 右标题的 大小-->
-    <dimen name="size_appbar_right_text_size">50.4px</dimen>
+    <dimen name="size_appbar_right_text_size">42.0px</dimen>
     <!--顶部 - 中间标题的 大小-->
     <dimen name="size_appbar_center_text_size">56.0px</dimen>
 

@@ -1,6 +1,17 @@
 package com.liuguilin.im.ui;
 
+import android.content.ContentValues;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.BlockedNumberContract;
+import android.provider.MediaStore;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -16,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.liuguilin.im.R;
 import com.liuguilin.im.adapter.UniversalAdapter;
@@ -28,21 +40,28 @@ import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.list.TimeComparison;
 import com.liuguilin.im.manager.DialogManager;
+import com.liuguilin.im.utils.CommonUtils;
+import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
+import com.liuguilin.im.utils.PictureUtils;
 import com.liuguilin.im.view.DialogView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMImageMessage;
 import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.bean.BmobIMTextMessage;
-import cn.bmob.newim.bean.BmobIMUserInfo;
+import cn.bmob.newim.bean.BmobIMVideoMessage;
 import cn.bmob.newim.core.BmobIMClient;
 import cn.bmob.newim.listener.MessageSendListener;
 import cn.bmob.newim.listener.MessagesQueryListener;
@@ -57,7 +76,10 @@ import cn.bmob.v3.listener.FindListener;
  * Email: lgl@szokl.com.cn
  * Profile: 聊天
  */
-public class ChatActivity extends BaseActivity implements View.OnClickListener, View.OnTouchListener {
+public class ChatActivity extends BaseActivity implements View.OnClickListener, View.OnTouchListener, SwipeRefreshLayout.OnRefreshListener {
+
+    private static int TAKEPHOTO = 1100;
+    private static int TAKEALBUM = 1101;
 
     private RelativeLayout include_title_iv_back;
     private TextView include_title_text;
@@ -75,6 +97,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     private LinearLayout ll_emoji;
     private Button btn_send;
     private RecyclerView mChatRyView;
+    private SwipeRefreshLayout mSwLayout;
 
     private DialogView mVoiceDialog;
 
@@ -82,10 +105,20 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     private UniversalAdapter<ImChatBean> mAdapter;
     private List<ImChatBean> mList = new ArrayList<>();
+    private List<BmobIMMessage> mMessage = new ArrayList<>();
     private LinearLayoutManager mLinearLayoutManager;
 
     //聊天对象的头像
     private static String chatPhotoUrl = "";
+
+    private File tempFile;
+    private Uri imageUri;
+    private String uploadPhotoPath;
+
+    private Uri uri;
+    private String path = "";
+
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +141,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         EventBus.getDefault().unregister(this);
     }
 
+    /**
+     * 初始化聊天组件
+     */
     private void initChat() {
         Bundle bundle = getIntent().getBundleExtra("bundle");
         if (bundle != null) {
@@ -159,6 +195,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ll_more = (LinearLayout) findViewById(R.id.ll_more);
         ll_emoji = (LinearLayout) findViewById(R.id.ll_emoji);
         mChatRyView = (RecyclerView) findViewById(R.id.mChatRyView);
+        mSwLayout = (SwipeRefreshLayout) findViewById(R.id.mSwLayout);
 
         include_title_iv_back.setOnClickListener(this);
         iv_voice.setOnClickListener(this);
@@ -166,6 +203,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         iv_more.setOnClickListener(this);
         tv_send_voice.setOnTouchListener(this);
         btn_send.setOnClickListener(this);
+        ll_camera.setOnClickListener(this);
+        ll_album.setOnClickListener(this);
+        mSwLayout.setOnRefreshListener(this);
 
         title_right_text.setText(getString(R.string.str_chat_more_right_text));
 
@@ -201,7 +241,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             }
 
             @Override
-            public void onBindData(ImChatBean model, UniversalViewHolder hodler, int type, int position) {
+            public void onBindData(final ImChatBean model, final UniversalViewHolder hodler, int type, int position) {
                 int msgType = model.getType();
                 switch (msgType) {
                     case ImChatBean.MSG_TIME:
@@ -211,7 +251,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         hodler.setText(R.id.tv_tips, model.getTips());
                         break;
                     case ImChatBean.MSG_LEFT_TEXT:
-                        setChatUserPhoto(hodler,R.id.iv_photo);
+                        setChatUserPhoto(hodler, R.id.iv_photo);
                         hodler.setText(R.id.tv_left_text, model.getMsgText());
                         break;
                     case ImChatBean.MSG_RIGHT_TEXT:
@@ -219,31 +259,48 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         setUserPhoto(hodler, R.id.iv_photo);
                         break;
                     case ImChatBean.MSG_LEFT_IMG:
-                        setChatUserPhoto(hodler,R.id.iv_photo);
+                        setChatUserPhoto(hodler, R.id.iv_photo);
+                        setMsgImg(model.getMsgImg(), hodler, R.id.iv_left_img);
                         break;
                     case ImChatBean.MSG_RIGHT_IMG:
                         setUserPhoto(hodler, R.id.iv_photo);
+                        setMsgImg(model.getMsgImg(), hodler, R.id.iv_right_img);
                         break;
                     case ImChatBean.MSG_LEFT_LOCATION:
-                        setChatUserPhoto(hodler,R.id.iv_photo);
+                        setChatUserPhoto(hodler, R.id.iv_photo);
                         break;
                     case ImChatBean.MSG_RIGHT_LOCATION:
                         setUserPhoto(hodler, R.id.iv_photo);
                         break;
                     case ImChatBean.MSG_LEFT_VOICE:
-                        setChatUserPhoto(hodler,R.id.iv_photo);
+                        setChatUserPhoto(hodler, R.id.iv_photo);
                         break;
                     case ImChatBean.MSG_RIGHT_VOICE:
                         setUserPhoto(hodler, R.id.iv_photo);
                         break;
                     case ImChatBean.MSG_LEFT_VIDEO:
-                        setChatUserPhoto(hodler,R.id.iv_photo);
+                        setChatUserPhoto(hodler, R.id.iv_photo);
+                        IMLog.e("left:" + model.getMsgVideo());
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final Bitmap bitmap = CommonUtils.createVideoThumb(model.getMsgVideo(), 200, 150);
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hodler.setImageBitmap(R.id.iv_left_video, bitmap);
+                                    }
+                                });
+                            }
+                        }).start();
                         break;
                     case ImChatBean.MSG_RIGHT_VIDEO:
                         setUserPhoto(hodler, R.id.iv_photo);
+                        IMLog.e("right:" + model.getMsgVideo());
+                        hodler.setImageBitmap(R.id.iv_right_video, CommonUtils.createVideoThumb(model.getMsgVideo()));
                         break;
                     case ImChatBean.MSG_LEFT_FILE:
-                        setChatUserPhoto(hodler,R.id.iv_photo);
+                        setChatUserPhoto(hodler, R.id.iv_photo);
                         break;
                     case ImChatBean.MSG_RIGHT_FILE:
                         setUserPhoto(hodler, R.id.iv_photo);
@@ -287,7 +344,40 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         });
         mChatRyView.setAdapter(mAdapter);
 
-        queryMessage();
+        queryMessage(null);
+    }
+
+    /**
+     * 设置聊天图片
+     *
+     * @param msgImg
+     */
+    private void setMsgImg(String msgImg, UniversalViewHolder hodler, int viewId) {
+        IMLog.i("msgImg" + msgImg + "viewId:" + viewId);
+        if (!TextUtils.isEmpty(msgImg)) {
+            if (msgImg.contains("&")) {
+                String[] list = msgImg.split("&");
+                if (list != null) {
+                    if (list.length > 0) {
+                        if (!TextUtils.isEmpty(list[0])) {
+                            hodler.setImagePath(ChatActivity.this, viewId, R.drawable.img_load_img, list[0]);
+                        } else {
+                            if (list.length > 1) {
+                                if (!TextUtils.isEmpty(list[1])) {
+                                    hodler.setImageUrl(ChatActivity.this, viewId, R.drawable.img_load_img, list[1]);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (msgImg.startsWith("http:")) {
+                    hodler.setImageUrl(ChatActivity.this, viewId, R.drawable.img_load_img, msgImg);
+                } else {
+                    hodler.setImagePath(ChatActivity.this, viewId, R.drawable.img_load_img, msgImg);
+                }
+            }
+        }
     }
 
     /**
@@ -297,7 +387,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void setChatUserPhoto(UniversalViewHolder holder, int viewId) {
         if (!TextUtils.isEmpty(chatPhotoUrl)) {
-            holder.setImageUrl(ChatActivity.this, viewId, chatPhotoUrl);
+            holder.setImageUrl(ChatActivity.this, viewId, R.drawable.img_def_photo, chatPhotoUrl);
         }
     }
 
@@ -313,7 +403,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         if (bmobFile != null) {
             String url = bmobFile.getFileUrl();
             if (!TextUtils.isEmpty(url)) {
-                holder.setImageUrl(ChatActivity.this, viewId, url);
+                holder.setImageUrl(ChatActivity.this, viewId, R.drawable.img_def_photo, url);
             }
         }
     }
@@ -321,16 +411,18 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     /**
      * 查询聊天记录
      */
-    private void queryMessage() {
-        IMSDK.queryMessage(mConversationManager, null, new MessagesQueryListener() {
+    private void queryMessage(BmobIMMessage msg) {
+        IMSDK.queryMessage(mConversationManager, msg, new MessagesQueryListener() {
             @Override
             public void done(List<BmobIMMessage> list, BmobException e) {
+                mSwLayout.setRefreshing(false);
                 if (e == null) {
                     if (list != null && list.size() > 0) {
                         //先按创建时间排序
                         Collections.sort(list, new TimeComparison());
                         for (int i = 0; i < list.size(); i++) {
                             BmobIMMessage message = list.get(i);
+                            mMessage.add(message);
                             IMLog.i(message.toString());
                             executeMessage(message);
                         }
@@ -348,6 +440,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      * @param message
      */
     private void executeMessage(BmobIMMessage message) {
+        //加一层判断 是否是出于这个对话场景
+
         //根据发送的Id来判断
         String id = message.getFromId();
         //相等 自己
@@ -355,6 +449,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             switch (message.getMsgType()) {
                 case "txt":
                     insertText(ImChatBean.MSG_RIGHT_TEXT, message.getContent());
+                    break;
+                case "image":
+                    insertImg(ImChatBean.MSG_RIGHT_IMG, message.getContent());
+                    break;
+                case "video":
+                    insertVideo(ImChatBean.MSG_RIGHT_VIDEO, message.getContent());
                     break;
             }
         } else {
@@ -364,6 +464,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                     break;
                 case "txt":
                     insertText(ImChatBean.MSG_LEFT_TEXT, message.getContent());
+                    break;
+                case "image":
+                    insertImg(ImChatBean.MSG_LEFT_IMG, message.getContent());
+                    break;
+                case "video":
+                    insertVideo(ImChatBean.MSG_LEFT_VIDEO, message.getContent());
                     break;
             }
         }
@@ -434,6 +540,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 String msgText = et_text.getText().toString().trim();
                 sendTextMsg(msgText);
                 break;
+            case R.id.ll_camera:
+                toCamera();
+                break;
+            case R.id.ll_album:
+                toAlbum();
+                break;
         }
     }
 
@@ -495,13 +607,13 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     /**
      * 插入图片
      *
-     * @param type   左右
-     * @param imgUrl 图片地址
+     * @param type    左右
+     * @param imgPath 图片地址
      */
-    private void insertImg(int type, String imgUrl) {
+    private void insertImg(int type, String imgPath) {
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
-        bean.setMsgImg(imgUrl);
+        bean.setMsgImg(imgPath);
         insertListData(bean);
     }
 
@@ -608,12 +720,105 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         mConversationManager.sendMessage(msg, mMessageSendListener);
     }
 
+    /**
+     * 发送图片
+     *
+     * @param path
+     */
+    private void sendImgMsg(String path) {
+        BmobIMImageMessage image = new BmobIMImageMessage(path);
+        insertImg(ImChatBean.MSG_RIGHT_IMG, path);
+        mConversationManager.sendMessage(image, mMessageSendListener);
+    }
+
+    /**
+     * 发送视频文件
+     *
+     * @param path
+     */
+    private void sendVideoMsg(String path) {
+        BmobIMVideoMessage video = new BmobIMVideoMessage(path);
+        insertVideo(ImChatBean.MSG_RIGHT_VIDEO, path);
+        mConversationManager.sendMessage(video, mMessageSendListener);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         switch (event.getType()) {
             case EventManager.EVENT_TYPE_MSG_EVENT:
                 executeMessage(event.getMessageEvent().getMessage());
                 break;
+        }
+    }
+
+    /**
+     * 相机
+     */
+    private void toCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String filename = timeStampFormat.format(new Date());
+        tempFile = new File(Environment.getExternalStorageDirectory(), filename + ".jpg");
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            // 从文件中创建uri
+            imageUri = Uri.fromFile(tempFile);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        } else {
+            //兼容android7.0 使用共享文件的形式
+            ContentValues contentValues = new ContentValues(1);
+            contentValues.put(MediaStore.Images.Media.DATA, tempFile.getAbsolutePath());
+            imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        }
+        startActivityForResult(intent, TAKEPHOTO);
+    }
+
+    /**
+     * 相册
+     */
+    private void toAlbum() {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("video/*;image/*");
+        startActivityForResult(photoPickerIntent, TAKEALBUM);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == TAKEPHOTO) {
+                if (!TextUtils.isEmpty(tempFile.getPath())) {
+                    uploadPhotoPath = tempFile.getPath();
+                }
+            } else if (requestCode == TAKEALBUM) {
+                if (data != null) {
+                    uri = data.getData();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        path = this.uri.getPath();
+                        path = PictureUtils.getPath_above19(this, uri);
+                    } else {
+                        path = PictureUtils.getFilePath_below19(this, this.uri);
+                    }
+                    if (!TextUtils.isEmpty(path)) {
+                        uploadPhotoPath = path;
+                    }
+                }
+            }
+            if (!TextUtils.isEmpty(uploadPhotoPath)) {
+                //根据后缀判断文件
+                if (uploadPhotoPath.endsWith(".mp4")) {
+                    sendVideoMsg(uploadPhotoPath);
+                } else if (uploadPhotoPath.endsWith(".jpg") || uploadPhotoPath.endsWith(".png")) {
+                    sendImgMsg(uploadPhotoPath);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        if (mMessage != null && mMessage.size() > 0) {
+            IMLog.e(mMessage.toString());
+            queryMessage(mMessage.get(0));
         }
     }
 }

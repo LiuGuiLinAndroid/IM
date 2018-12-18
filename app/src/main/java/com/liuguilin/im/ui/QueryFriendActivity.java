@@ -82,7 +82,7 @@ public class QueryFriendActivity extends BaseActivity implements View.OnClickLis
                 if (bmobFile != null) {
                     String fileUrl = bmobFile.getFileUrl();
                     if (!TextUtils.isEmpty(fileUrl)) {
-                        hodler.setImageUrl(QueryFriendActivity.this, R.id.iv_user, fileUrl);
+                        hodler.setImageUrl(QueryFriendActivity.this, R.id.iv_user, R.drawable.img_def_photo,fileUrl);
                     } else {
                         hodler.setImageResource(R.id.iv_user, R.drawable.img_def_photo);
                     }

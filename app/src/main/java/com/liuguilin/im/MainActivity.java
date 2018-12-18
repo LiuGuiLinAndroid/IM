@@ -1,6 +1,9 @@
 package com.liuguilin.im;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.liuguilin.im.entity.Constants;
 import com.liuguilin.im.event.EventManager;
@@ -24,9 +28,13 @@ import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.service.IMService;
 import com.liuguilin.im.ui.QueryFriendActivity;
+import com.liuguilin.im.ui.ScanActivity;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.IMLog;
 import com.liuguilin.im.view.DialogView;
+import com.uuzuche.lib_zxing.activity.CaptureActivity;
+import com.uuzuche.lib_zxing.activity.CaptureFragment;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,6 +44,8 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    public static final int REQUEST_CODE = 1001;
 
     private RelativeLayout include_title_iv_back;
     private TextView include_title_text;
@@ -116,12 +126,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ll_me.setOnClickListener(this);
 
         //逻辑部分
-
         include_title_iv_back.setVisibility(View.GONE);
 
         checkMainTab(0);
 
         CommonUtils.startService(this, IMService.class);
+
+        getAllUnReadCount();
     }
 
     /**
@@ -130,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void checkBindPhoto() {
         IMUser imUser = IMSDK.getCurrentUser();
         String phone = imUser.getMobilePhoneNumber();
-        IMLog.i("photo:" + phone);
+        IMLog.i("phone:" + phone);
         if (TextUtils.isEmpty(phone)) {
             imUser.setMobilePhoneNumber(imUser.getUsername());
             imUser.setMobilePhoneNumberVerified(true);
@@ -325,6 +336,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.tv_scan:
                 DialogManager.getInstance().hide(mMenuDialog);
+                //启动二维码
+                Intent intent = new Intent(this, ScanActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
                 break;
             case R.id.ll_session:
                 checkMainTab(0);
@@ -362,6 +376,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case EventManager.EVENT_TYPE_NEW_FIREND_UN:
                 iv_new_msg.setVisibility(View.GONE);
                 break;
+            case EventManager.EVENT_TYPE_MSG_EVENT:
+            case EventManager.EVENT_TYPE_MAIN_SIZE:
+                //新消息更新未读数量
+                getAllUnReadCount();
+                break;
         }
+    }
+
+    /**
+     * 查询全部的未读数量
+     */
+    private void getAllUnReadCount() {
+        long size = IMSDK.getAllUnReadCount();
+        IMLog.i("getAllUnReadCount:" + size);
+        if (size > 0) {
+            tv_unread_size.setText("" + size);
+            tv_unread_size.setVisibility(View.VISIBLE);
+        } else {
+            tv_unread_size.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE) {
+            if (null != data) {
+                Bundle bundle = data.getExtras();
+                if (bundle == null) {
+                    return;
+                }
+                if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+                    String result = bundle.getString(CodeUtils.RESULT_STRING);
+                    Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+                } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
+                    Toast.makeText(MainActivity.this, "解析二维码失败", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

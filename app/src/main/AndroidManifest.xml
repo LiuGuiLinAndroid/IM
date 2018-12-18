@@ -115,6 +115,9 @@
         <!--二维码-->
         <activity android:name=".ui.MyQrCodeActivity" />
 
+        <!--扫一扫-->
+        <activity android:name=".ui.ScanActivity" />
+
     </application>
 
 </manifest>

@@ -116,8 +116,11 @@ public class IMHandlerReceiver extends BmobIMMessageHandler {
      * @param messageEvent
      */
     private void processSDKMessage(BmobIMMessage msg, MessageEvent messageEvent) {
-        IMLog.i("processSDKMessage");
+        IMLog.i("processSDKMessage:" + msg.toString());
         EventManager.postMessageEvent(EventManager.EVENT_TYPE_MSG_EVENT, messageEvent);
+        BmobIMUserInfo fromUserInfo = messageEvent.getFromUserInfo();
+        //并且弹出通知栏
+        showNotify(MainActivity.class, mContext.getString(R.string.str_toast_have_msg), fromUserInfo.getName(), msg.getContent(), msg);
     }
 
     /**

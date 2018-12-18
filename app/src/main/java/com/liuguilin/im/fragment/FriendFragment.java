@@ -146,7 +146,7 @@ public class FriendFragment extends BaseFragment implements SwipeRefreshLayout.O
                         if (bmobFile != null) {
                             String fileUrl = bmobFile.getFileUrl();
                             if (!TextUtils.isEmpty(fileUrl)) {
-                                hodler.setImageUrl(getActivity(), R.id.iv_user, fileUrl);
+                                hodler.setImageUrl(getActivity(), R.id.iv_user, R.drawable.img_def_photo,fileUrl);
                             }
                         }
                         //性別

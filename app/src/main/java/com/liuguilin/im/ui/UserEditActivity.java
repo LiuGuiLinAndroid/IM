@@ -139,7 +139,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
             if (bmobFile != null) {
                 String fileUrl = bmobFile.getFileUrl();
                 if (!TextUtils.isEmpty(fileUrl)) {
-                    GlideUtils.loadImg(this, fileUrl,R.drawable.img_def_photo, iv_photo);
+                    GlideUtils.loadImg(this, fileUrl, R.drawable.img_def_photo, iv_photo);
                 }
             }
             String nickName = imUser.getNickname();
@@ -354,7 +354,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                 }
             }
             if (uploadPhotoFile != null) {
-                GlideUtils.loadFile(this, uploadPhotoFile, iv_photo);
+                GlideUtils.loadFile(this, uploadPhotoFile, R.drawable.img_load_img, iv_photo);
             }
         }
     }

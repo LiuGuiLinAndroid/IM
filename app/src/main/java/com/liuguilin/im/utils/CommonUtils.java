@@ -3,12 +3,19 @@ package com.liuguilin.im.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.widget.Toast;
 
 import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.ui.ChatActivity;
 import com.liuguilin.im.view.DialogView;
+
+import java.util.HashMap;
 
 import cn.bmob.newim.bean.BmobIMConversation;
 
@@ -66,5 +73,53 @@ public class CommonUtils {
         bundle.putSerializable("c", conversationEntrance);
         intent.putExtra("bundle", bundle);
         mContext.startActivity(intent);
+    }
+
+    /**
+     * 获取视频第一帧
+     *
+     * @param path
+     * @return
+     */
+    public static Bitmap createVideoThumb(String path) {
+        MediaMetadataRetriever media = new MediaMetadataRetriever();
+        media.setDataSource(path);
+        return media.getFrameAtTime();
+    }
+
+    /**
+     * 获取网络视频第一帧
+     *
+     * @param url
+     * @param width
+     * @param height
+     * @return
+     */
+    public static Bitmap createVideoThumb(String url, int width, int height) {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        int kind = MediaStore.Video.Thumbnails.MINI_KIND;
+        try {
+            if (Build.VERSION.SDK_INT >= 14) {
+                retriever.setDataSource(url, new HashMap<String, String>());
+            } else {
+                retriever.setDataSource(url);
+            }
+            bitmap = retriever.getFrameAtTime();
+        } catch (IllegalArgumentException ex) {
+            // Assume this is a corrupt video file
+        } catch (RuntimeException ex) {
+            // Assume this is a corrupt video file.
+        } finally {
+            try {
+                retriever.release();
+            } catch (RuntimeException ex) {
+                // Ignore failures while cleaning up.
+            }
+        }
+        if (kind == MediaStore.Images.Thumbnails.MICRO_KIND && bitmap != null) {
+            bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+        }
+        return bitmap;
     }
 }

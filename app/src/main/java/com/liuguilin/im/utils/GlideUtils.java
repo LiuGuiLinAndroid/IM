@@ -55,10 +55,10 @@ public class GlideUtils {
      * @param imgFile
      * @param mImageView
      */
-    public static void loadFile(Context mContext, File imgFile, ImageView mImageView) {
+    public static void loadFile(Context mContext, File imgFile, int resId,ImageView mImageView) {
         try {
             if (Util.isOnMainThread()) {
-                Glide.with(mContext).load(imgFile).into(mImageView);
+                Glide.with(mContext).load(imgFile).dontAnimate().placeholder(resId).into(mImageView);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

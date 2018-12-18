@@ -21,6 +21,9 @@ public class EventManager {
     //接收到消息事件
     public static final int EVENT_TYPE_MSG_EVENT = 3;
 
+    //刷新主页未读
+    public static final int EVENT_TYPE_MAIN_SIZE = 4;
+
     /**
      * 消息类型
      * @param type

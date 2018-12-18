@@ -1,6 +1,7 @@
 package com.liuguilin.im.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.liuguilin.im.R;
 import com.liuguilin.im.utils.GlideUtils;
+
+import java.io.File;
 
 /**
  * FileName: UniversalViewHolder
@@ -65,6 +68,13 @@ public class UniversalViewHolder extends RecyclerView.ViewHolder {
         return (T) view;
     }
 
+    /**
+     * 设置文本
+     *
+     * @param viewId
+     * @param text
+     * @return
+     */
     public UniversalViewHolder setText(int viewId, String text) {
         TextView tv = getSubView(viewId);
         if (!TextUtils.isEmpty(text)) {
@@ -73,17 +83,72 @@ public class UniversalViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
-    public UniversalViewHolder setImageUrl(Context mContext, int viewId, String url) {
+    /**
+     * 设置网络地址
+     *
+     * @param mContext
+     * @param viewId
+     * @param url
+     * @return
+     */
+    public UniversalViewHolder setImageUrl(Context mContext, int viewId,int placeholderId, String url) {
         ImageView iv = getSubView(viewId);
         if (!TextUtils.isEmpty(url)) {
-            GlideUtils.loadImg(mContext, url,R.drawable.img_def_photo, iv);
+            GlideUtils.loadImg(mContext, url, placeholderId, iv);
         }
         return this;
     }
 
+    /**
+     * 设置本地图片
+     * @param mContext
+     * @param viewId
+     * @param path
+     * @return
+     */
+    public UniversalViewHolder setImagePath(Context mContext, int viewId,int placeholderId, String path) {
+        ImageView iv = getSubView(viewId);
+        if (!TextUtils.isEmpty(path)) {
+            GlideUtils.loadFile(mContext, new File(path), placeholderId, iv);
+        }
+        return this;
+    }
+
+    /**
+     * 设置本地图片
+     *
+     * @param viewId
+     * @param resId
+     * @return
+     */
     public UniversalViewHolder setImageResource(int viewId, int resId) {
         ImageView iv = getSubView(viewId);
         iv.setImageResource(resId);
+        return this;
+    }
+
+    /**
+     * 设置位图
+     * @param viewId
+     * @param bitmap
+     * @return
+     */
+    public UniversalViewHolder setImageBitmap(int viewId, Bitmap bitmap) {
+        ImageView iv = getSubView(viewId);
+        iv.setImageBitmap(bitmap);
+        return this;
+    }
+
+    /**
+     * 设置显示隐藏
+     *
+     * @param viewId
+     * @param visibility
+     * @return
+     */
+    public UniversalViewHolder setVisibility(int viewId, int visibility) {
+        View view = getSubView(viewId);
+        view.setVisibility(visibility);
         return this;
     }
 }

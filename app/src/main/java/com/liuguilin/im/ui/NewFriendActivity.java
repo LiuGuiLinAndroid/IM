@@ -89,7 +89,7 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onBindData(final NewFriend model, UniversalViewHolder hodler, int type, final int position) {
                 if (!TextUtils.isEmpty(model.getAvatar())) {
-                    hodler.setImageUrl(NewFriendActivity.this, R.id.iv_user, model.getAvatar());
+                    hodler.setImageUrl(NewFriendActivity.this, R.id.iv_user, R.drawable.img_def_photo,model.getAvatar());
                 }
                 hodler.setText(R.id.tv_niname, model.getName());
                 hodler.setText(R.id.tv_desc, model.getMsg());
