@@ -43,6 +43,7 @@ import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
+import com.liuguilin.im.utils.PermissionUtils;
 import com.liuguilin.im.utils.PictureUtils;
 import com.liuguilin.im.view.DialogView;
 
@@ -541,7 +542,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 sendTextMsg(msgText);
                 break;
             case R.id.ll_camera:
-                toCamera();
+
                 break;
             case R.id.ll_album:
                 toAlbum();

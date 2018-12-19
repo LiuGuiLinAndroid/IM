@@ -1,7 +1,9 @@
 package com.liuguilin.im.ui;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +18,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.pickerview.builder.TimePickerBuilder;
+import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.TimePickerView;
+import com.liuguilin.im.MainActivity;
 import com.liuguilin.im.R;
 import com.liuguilin.im.base.BaseActivity;
 import com.liuguilin.im.im.IMSDK;
@@ -28,9 +34,18 @@ import com.liuguilin.im.utils.PictureUtils;
 import com.liuguilin.im.view.DialogView;
 import com.liuguilin.im.view.LodingView;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
@@ -84,6 +99,12 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
     private TextView tv_girl;
     private TextView tv_sex_cancel;
 
+    private TimePickerView pvTime;
+
+    private List<String> mListProvince = new ArrayList<>();
+    private List<List<String>> mListCity = new ArrayList<>();
+    private List<List<String>> mListArea = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +117,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
 
         initPhotoDialog();
         initSexDialog();
+        initWheelView();
         LodingView.getInstance().initView(this);
 
         include_title_iv_back = (RelativeLayout) findViewById(R.id.include_title_iv_back);
@@ -130,6 +152,29 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
 
         //更新信息
         updateUser();
+    }
+
+    private void initWheelView() {
+        pvTime = new TimePickerBuilder(this, new OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                IMLog.i("Date" + date.toString());
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                tv_birthday.setText(format.format(date));
+            }
+        }).setCancelText(getString(R.string.str_common_cancel))
+                .setTitleText(getString(R.string.str_user_edit_selete_date))
+                .setSubmitText(getString(R.string.str_common_confirm))
+                .setLabel(getString(R.string.str_time_year),
+                        getString(R.string.str_time_month),
+                        getString(R.string.str_time_day),
+                        getString(R.string.str_time_hour),
+                        getString(R.string.str_time_minute),
+                        getString(R.string.str_time_seconds))
+                .build();
+
+        //读取城市
+
     }
 
     private void updateUser() {
@@ -226,7 +271,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                 DialogManager.getInstance().show(mSexDialog);
                 break;
             case R.id.ll_birthday:
-                Toast.makeText(this, "ll_birthday", Toast.LENGTH_SHORT).show();
+                pvTime.show();
                 break;
             case R.id.ll_city:
                 Toast.makeText(this, "ll_city", Toast.LENGTH_SHORT).show();
@@ -357,5 +402,26 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                 GlideUtils.loadFile(this, uploadPhotoFile, R.drawable.img_load_img, iv_photo);
             }
         }
+    }
+
+    /**
+     * 读取Assets下的Json
+     * @param mContext
+     * @param fileName
+     * @return
+     */
+    public String getAssetsJson(Context mContext, String fileName) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            AssetManager assetManager = mContext.getAssets();
+            BufferedReader bf = new BufferedReader(new InputStreamReader(assetManager.open(fileName)));
+            String line;
+            while ((line = bf.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
     }
 }

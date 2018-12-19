@@ -1,5 +1,6 @@
 package com.liuguilin.im;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import com.liuguilin.im.ui.QueryFriendActivity;
 import com.liuguilin.im.ui.ScanActivity;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.IMLog;
+import com.liuguilin.im.utils.PermissionUtils;
 import com.liuguilin.im.view.DialogView;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
 
+        checkPermisson();
         checkBindPhoto();
         initFragment();
         initMenuDialog();
@@ -133,6 +136,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         CommonUtils.startService(this, IMService.class);
 
         getAllUnReadCount();
+    }
+
+    /**
+     * 检查权限
+     */
+    private void checkPermisson() {
+        PermissionUtils.requestAllPermissions(this, 100);
     }
 
     /**

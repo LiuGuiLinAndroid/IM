@@ -51,6 +51,7 @@
     <string name="str_user_edit_city">地区:</string>
     <string name="str_user_edit_camera">相机</string>
     <string name="str_user_edit_ablum">相册</string>
+    <string name="str_user_edit_selete_date">选择日期</string>
 
     <!--添加好友-->
     <string name="str_add_friend_title_text">添加好友</string>
@@ -134,6 +135,13 @@
     <string name="str_time_format_7">月前</string>
     <string name="str_time_format_8">半年前</string>
     <string name="str_time_format_9">年前</string>
+
+    <string name="str_time_year">年</string>
+    <string name="str_time_month">月</string>
+    <string name="str_time_day">日</string>
+    <string name="str_time_hour">时</string>
+    <string name="str_time_minute">分</string>
+    <string name="str_time_seconds">秒</string>
 
     <!--Common-->
     <string name="str_common_confirm">确定</string>

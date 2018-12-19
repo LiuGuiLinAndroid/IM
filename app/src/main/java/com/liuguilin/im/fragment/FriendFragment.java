@@ -1,7 +1,6 @@
 package com.liuguilin.im.fragment;
 
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -15,20 +14,16 @@ import com.liuguilin.im.R;
 import com.liuguilin.im.adapter.UniversalAdapter;
 import com.liuguilin.im.adapter.UniversalViewHolder;
 import com.liuguilin.im.base.BaseFragment;
-import com.liuguilin.im.db.DBHelper;
 import com.liuguilin.im.event.EventManager;
 import com.liuguilin.im.event.MessageEvent;
 import com.liuguilin.im.im.Friend;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.manager.DialogManager;
-import com.liuguilin.im.ui.ChatActivity;
-import com.liuguilin.im.ui.QueryFriendActivity;
 import com.liuguilin.im.utils.CommonUtils;
-import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
 import com.liuguilin.im.view.DialogView;
-import com.liuguilin.im.view.NullReceiverView;
+import com.liuguilin.im.view.LettersView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -53,10 +48,9 @@ import cn.bmob.v3.listener.UpdateListener;
  * Email: lgl@szokl.com.cn
  * Profile: 好友
  */
-public class FriendFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
+public class FriendFragment extends BaseFragment implements View.OnClickListener {
 
     private RecyclerView mFriendRyView;
-    private SwipeRefreshLayout mSwLayout;
     private UniversalAdapter<Friend> mAdapter;
     private List<Friend> mList = new ArrayList<>();
     //好友列表
@@ -65,6 +59,8 @@ public class FriendFragment extends BaseFragment implements SwipeRefreshLayout.O
     private DialogView mDeleteDialog;
     private TextView tv_delete;
     private static int DELETE_ID = -1;
+    private TextView tvToast;
+    private LettersView mLettersView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,9 +74,9 @@ public class FriendFragment extends BaseFragment implements SwipeRefreshLayout.O
         initDeleteDialog();
 
         mFriendRyView = (RecyclerView) view.findViewById(R.id.mFriendRyView);
-        mSwLayout = (SwipeRefreshLayout) view.findViewById(R.id.mSwLayout);
-
-        mSwLayout.setOnRefreshListener(this);
+        tvToast = (TextView) view.findViewById(R.id.tvToast);
+        mLettersView = (LettersView) view.findViewById(R.id.mLettersView);
+        mLettersView.setTextView(tvToast);
 
         mFriendRyView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAdapter = new UniversalAdapter<>(mList, new UniversalAdapter.OnBindDataInterface<Friend>() {
@@ -146,7 +142,7 @@ public class FriendFragment extends BaseFragment implements SwipeRefreshLayout.O
                         if (bmobFile != null) {
                             String fileUrl = bmobFile.getFileUrl();
                             if (!TextUtils.isEmpty(fileUrl)) {
-                                hodler.setImageUrl(getActivity(), R.id.iv_user, R.drawable.img_def_photo,fileUrl);
+                                hodler.setImageUrl(getActivity(), R.id.iv_user, R.drawable.img_def_photo, fileUrl);
                             }
                         }
                         //性別
@@ -166,11 +162,9 @@ public class FriendFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 
     private void getFriends() {
-        mSwLayout.setRefreshing(true);
         IMSDK.queryFriends(new FindListener<Friend>() {
             @Override
             public void done(List<Friend> list, BmobException e) {
-                mSwLayout.setRefreshing(false);
                 if (e == null) {
                     if (mList != null && mList.size() > 0) {
                         mList.clear();
@@ -183,11 +177,6 @@ public class FriendFragment extends BaseFragment implements SwipeRefreshLayout.O
                 }
             }
         });
-    }
-
-    @Override
-    public void onRefresh() {
-        getFriends();
     }
 
     @Override
