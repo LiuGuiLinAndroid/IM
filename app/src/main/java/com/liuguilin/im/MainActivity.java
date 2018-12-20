@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.liuguilin.im.base.BaseActivity;
 import com.liuguilin.im.entity.Constants;
 import com.liuguilin.im.event.EventManager;
 import com.liuguilin.im.event.MessageEvent;
@@ -26,10 +27,13 @@ import com.liuguilin.im.fragment.NewsFragment;
 import com.liuguilin.im.fragment.SessionFragment;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
+import com.liuguilin.im.im.NewFriend;
 import com.liuguilin.im.manager.DialogManager;
 import com.liuguilin.im.service.IMService;
 import com.liuguilin.im.ui.QueryFriendActivity;
 import com.liuguilin.im.ui.ScanActivity;
+import com.liuguilin.im.ui.SettingActivity;
+import com.liuguilin.im.ui.UserInfoActivity;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.IMLog;
 import com.liuguilin.im.utils.PermissionUtils;
@@ -42,10 +46,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
+
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public static final int REQUEST_CODE = 1001;
 
@@ -167,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initMenuDialog() {
-        mMenuDialog = DialogManager.getInstance().initView(this, R.layout.dialog_mian_menu, Gravity.CENTER);
+        mMenuDialog = DialogManager.getInstance().initView(this, R.layout.dialog_mian_menu);
         tv_more_link = (TextView) mMenuDialog.findViewById(R.id.tv_more_link);
         tv_add_friend = (TextView) mMenuDialog.findViewById(R.id.tv_add_friend);
         tv_scan = (TextView) mMenuDialog.findViewById(R.id.tv_scan);
@@ -240,6 +247,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (mMeFragment != null) {
             transaction.hide(mMeFragment);
+        }
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        if (mSessionFragment == null && fragment instanceof SessionFragment) {
+            mSessionFragment = (SessionFragment) fragment;
+        }
+        if (mFriendFragment == null && fragment instanceof FriendFragment) {
+            mFriendFragment = (FriendFragment) fragment;
+        }
+        if (mNewsFragment == null && fragment instanceof NewsFragment) {
+            mNewsFragment = (NewsFragment) fragment;
+        }
+        if (mMeFragment == null && fragment instanceof MeFragment) {
+            mMeFragment = (MeFragment) fragment;
         }
     }
 
@@ -334,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (Constants.CURRENT_FRAGMENT instanceof SessionFragment) {
                     DialogManager.getInstance().show(mMenuDialog);
                 } else if (Constants.CURRENT_FRAGMENT instanceof MeFragment) {
-
+                    CommonUtils.startActivity(this, SettingActivity.class, false);
                 }
                 break;
             case R.id.tv_more_link:
@@ -365,18 +388,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         switch (event.getType()) {
@@ -390,6 +401,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case EventManager.EVENT_TYPE_MAIN_SIZE:
                 //新消息更新未读数量
                 getAllUnReadCount();
+                break;
+            case EventManager.EVENT_TYPE_MAIN_EXIT:
+                finish();
                 break;
         }
     }
@@ -418,12 +432,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                     String result = bundle.getString(CodeUtils.RESULT_STRING);
-                    Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+                    if (!TextUtils.isEmpty(result)) {
+                        //用户名
+                        IMSDK.queryFriend("username", result, new FindListener<IMUser>() {
+                            @Override
+                            public void done(List<IMUser> list, BmobException e) {
+                                if (e == null) {
+                                    if (list.size() > 0) {
+                                        IMUser imUser = list.get(0);
+                                        IMLog.i(imUser.toString());
+                                        //过滤自己
+                                        if (!imUser.getUsername().equals(IMSDK.getCurrentUser().getUsername())) {
+                                            Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
+                                            intent.putExtra("user", imUser);
+                                            startActivity(intent);
+                                        } else {
+                                            CommonUtils.Toast(MainActivity.this, getString(R.string.str_main_scan_you));
+                                        }
+                                    } else {
+                                        toastScanFail();
+                                    }
+                                } else {
+                                    IMLog.e(e.toString());
+                                    toastScanFail();
+                                }
+                            }
+                        });
+                    } else {
+                        toastScanFail();
+                    }
                 } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
-                    Toast.makeText(MainActivity.this, "解析二维码失败", Toast.LENGTH_LONG).show();
+                    toastScanFail();
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void toastScanFail() {
+        CommonUtils.Toast(this, getString(R.string.str_toast_qrcode_fail));
     }
 }

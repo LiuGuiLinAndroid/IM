@@ -87,11 +87,33 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
         mNewFriendRyView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new UniversalAdapter<>(mDateList, new UniversalAdapter.OnBindDataInterface<NewFriend>() {
             @Override
-            public void onBindData(final NewFriend model, UniversalViewHolder hodler, int type, final int position) {
+            public void onBindData(final NewFriend model, final UniversalViewHolder hodler, int type, final int position) {
                 if (!TextUtils.isEmpty(model.getAvatar())) {
-                    hodler.setImageUrl(NewFriendActivity.this, R.id.iv_user, R.drawable.img_def_photo,model.getAvatar());
+                    hodler.setImageUrl(NewFriendActivity.this, R.id.iv_user, R.drawable.img_def_photo, model.getAvatar());
                 }
-                hodler.setText(R.id.tv_niname, model.getName());
+
+                //根据id找昵称
+                IMSDK.queryFriend("objectId", model.getUid(), new FindListener<IMUser>() {
+                    @Override
+                    public void done(List<IMUser> list, BmobException e) {
+                        if (e == null) {
+                            if (list != null && list.size() > 0) {
+                                IMUser imUser = list.get(0);
+                                if (imUser != null) {
+                                    hodler.setText(R.id.tv_niname, TextUtils.isEmpty(imUser.getNickname()) ? model.getName() : imUser.getNickname());
+                                } else {
+                                    hodler.setText(R.id.tv_niname, model.getName());
+                                }
+                            } else {
+                                hodler.setText(R.id.tv_niname, model.getName());
+                            }
+                        } else {
+                            IMLog.e(e.toString());
+                            hodler.setText(R.id.tv_niname, model.getName());
+                        }
+                    }
+                });
+
                 hodler.setText(R.id.tv_desc, model.getMsg());
 
                 setOpText((Button) hodler.getSubView(R.id.btn_op), model.getStatus());
@@ -163,9 +185,9 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
                         } else {
                             addFriend(model);
                         }
-                    }else{
-                       IMLog.i("size null");
-                       //没有好友
+                    } else {
+                        IMLog.i("size null");
+                        //没有好友
                         addFriend(model);
                     }
                 } else {
@@ -216,7 +238,7 @@ public class NewFriendActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void initDeleteDialog() {
-        mDeleteDialog = DialogManager.getInstance().initView(this, R.layout.dialog_delete, Gravity.CENTER);
+        mDeleteDialog = DialogManager.getInstance().initView(this, R.layout.dialog_delete);
         tv_delete = mDeleteDialog.findViewById(R.id.tv_delete);
         tv_delete.setOnClickListener(this);
     }

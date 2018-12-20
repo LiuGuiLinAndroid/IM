@@ -20,6 +20,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     //Bmob
     implementation 'cn.bmob.android:bmob-im:2.1.1@aar'
@@ -36,4 +37,7 @@ dependencies {
     implementation 'cn.yipianfengye.android:zxing-library:2.2'
     //WheelView
     implementation 'com.contrarywind:Android-PickerView:4.1.6'
+    implementation ('com.kymjs.rxvolley:rxvolley:1.1.4') {
+        exclude group: 'io.reactivex'
+    }
 }

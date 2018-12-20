@@ -3,8 +3,10 @@ package com.liuguilin.im.base;
 import android.app.Application;
 
 import com.liuguilin.im.receiver.IMHandlerReceiver;
+import com.liuguilin.im.utils.SharedPreUtils;
 
 import org.litepal.LitePalApplication;
+import org.litepal.util.SharedUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,6 +35,7 @@ public class BaseApplication extends LitePalApplication {
         if (getApplicationInfo().packageName.equals(getMyProcessName())){
             BmobIM.init(this);
             BmobIM.registerDefaultMessageHandler(new IMHandlerReceiver(this));
+            SharedPreUtils.getInstance().init(this);
         }
     }
 

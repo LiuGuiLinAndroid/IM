@@ -130,18 +130,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         initView();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
     /**
      * 初始化聊天组件
      */
@@ -410,17 +398,17 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     /**
+     * `
      * 查询聊天记录
      */
     private void queryMessage(BmobIMMessage msg) {
+        IMLog.i("queryMessage");
         IMSDK.queryMessage(mConversationManager, msg, new MessagesQueryListener() {
             @Override
             public void done(List<BmobIMMessage> list, BmobException e) {
                 mSwLayout.setRefreshing(false);
                 if (e == null) {
                     if (list != null && list.size() > 0) {
-                        //先按创建时间排序
-                        Collections.sort(list, new TimeComparison());
                         for (int i = 0; i < list.size(); i++) {
                             BmobIMMessage message = list.get(i);
                             mMessage.add(message);
@@ -449,35 +437,35 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         if (IMSDK.getCurrentUser().getObjectId().equals(id)) {
             switch (message.getMsgType()) {
                 case "txt":
-                    insertText(ImChatBean.MSG_RIGHT_TEXT, message.getContent());
+                    insertText(message.getCreateTime(), ImChatBean.MSG_RIGHT_TEXT, message.getContent());
                     break;
                 case "image":
-                    insertImg(ImChatBean.MSG_RIGHT_IMG, message.getContent());
+                    insertImg(message.getCreateTime(), ImChatBean.MSG_RIGHT_IMG, message.getContent());
                     break;
                 case "video":
-                    insertVideo(ImChatBean.MSG_RIGHT_VIDEO, message.getContent());
+                    insertVideo(message.getCreateTime(), ImChatBean.MSG_RIGHT_VIDEO, message.getContent());
                     break;
             }
         } else {
             switch (message.getMsgType()) {
                 case "agree":
-                    insertTips(message.getContent());
+                    insertTips(message.getCreateTime(), message.getContent());
                     break;
                 case "txt":
-                    insertText(ImChatBean.MSG_LEFT_TEXT, message.getContent());
+                    insertText(message.getCreateTime(), ImChatBean.MSG_LEFT_TEXT, message.getContent());
                     break;
                 case "image":
-                    insertImg(ImChatBean.MSG_LEFT_IMG, message.getContent());
+                    insertImg(message.getCreateTime(), ImChatBean.MSG_LEFT_IMG, message.getContent());
                     break;
                 case "video":
-                    insertVideo(ImChatBean.MSG_LEFT_VIDEO, message.getContent());
+                    insertVideo(message.getCreateTime(), ImChatBean.MSG_LEFT_VIDEO, message.getContent());
                     break;
             }
         }
     }
 
     private void initVoiceDialog() {
-        mVoiceDialog = DialogManager.getInstance().initView(this, R.layout.dialog_voice, Gravity.CENTER);
+        mVoiceDialog = DialogManager.getInstance().initView(this, R.layout.dialog_voice);
     }
 
     @Override
@@ -542,7 +530,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 sendTextMsg(msgText);
                 break;
             case R.id.ll_camera:
-
+                toCamera();
                 break;
             case R.id.ll_album:
                 toAlbum();
@@ -573,11 +561,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      *
      * @param time
      */
-    private void insertTime(String time) {
+    private void insertTime(long updateTime, String time) {
         ImChatBean bean = new ImChatBean();
         bean.setType(ImChatBean.MSG_TIME);
         bean.setTime(time);
-        insertListData(bean);
+        insertListData(bean, updateTime);
     }
 
     /**
@@ -585,11 +573,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      *
      * @param tips
      */
-    private void insertTips(String tips) {
+    private void insertTips(long updateTime, String tips) {
         ImChatBean bean = new ImChatBean();
         bean.setType(ImChatBean.MSG_TIPS);
         bean.setTips(tips);
-        insertListData(bean);
+        insertListData(bean, updateTime);
     }
 
     /**
@@ -598,11 +586,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      * @param type 左右
      * @param text 文本
      */
-    private void insertText(int type, String text) {
+    private void insertText(long updateTime, int type, String text) {
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgText(text);
-        insertListData(bean);
+        insertListData(bean, updateTime);
     }
 
     /**
@@ -611,11 +599,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      * @param type    左右
      * @param imgPath 图片地址
      */
-    private void insertImg(int type, String imgPath) {
+    private void insertImg(long updateTime, int type, String imgPath) {
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgImg(imgPath);
-        insertListData(bean);
+        insertListData(bean, updateTime);
     }
 
     /**
@@ -624,11 +612,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      * @param type     左右
      * @param location 地址
      */
-    private void insertLocation(int type, String location) {
+    private void insertLocation(long updateTime, int type, String location) {
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgLocation(location);
-        insertListData(bean);
+        insertListData(bean, updateTime);
     }
 
     /**
@@ -637,11 +625,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      * @param type  左右
      * @param voice 语音地址
      */
-    private void insertVoice(int type, String voice) {
+    private void insertVoice(long updateTime, int type, String voice) {
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgVoice(voice);
-        insertListData(bean);
+        insertListData(bean, updateTime);
     }
 
     /**
@@ -650,11 +638,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      * @param type  左右
      * @param video 视频地址
      */
-    private void insertVideo(int type, String video) {
+    private void insertVideo(long updateTime, int type, String video) {
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgVideo(video);
-        insertListData(bean);
+        insertListData(bean, updateTime);
     }
 
     /**
@@ -663,11 +651,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      * @param type
      * @param file
      */
-    private void insertFile(int type, String file) {
+    private void insertFile(long updateTime, int type, String file) {
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgFile(file);
-        insertListData(bean);
+        insertListData(bean, updateTime);
     }
 
     /**
@@ -675,8 +663,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      *
      * @param bean
      */
-    private void insertListData(ImChatBean bean) {
+    private void insertListData(ImChatBean bean, long updateTime) {
+        bean.setUpdateTime(updateTime);
         mList.add(bean);
+        //先按创建时间排序
+        Collections.sort(mList, new TimeComparison());
         mAdapter.notifyDataSetChanged();
         //滚动底部
         mLinearLayoutManager.scrollToPositionWithOffset(mAdapter.getItemCount() - 1, 0);
@@ -717,7 +708,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     private void sendTextMsg(String text) {
         BmobIMTextMessage msg = new BmobIMTextMessage();
         msg.setContent(text);
-        insertText(ImChatBean.MSG_RIGHT_TEXT, text);
+        insertText(getSyTime(),ImChatBean.MSG_RIGHT_TEXT, text);
         mConversationManager.sendMessage(msg, mMessageSendListener);
     }
 
@@ -728,7 +719,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void sendImgMsg(String path) {
         BmobIMImageMessage image = new BmobIMImageMessage(path);
-        insertImg(ImChatBean.MSG_RIGHT_IMG, path);
+        insertImg(getSyTime(),ImChatBean.MSG_RIGHT_IMG, path);
         mConversationManager.sendMessage(image, mMessageSendListener);
     }
 
@@ -739,7 +730,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void sendVideoMsg(String path) {
         BmobIMVideoMessage video = new BmobIMVideoMessage(path);
-        insertVideo(ImChatBean.MSG_RIGHT_VIDEO, path);
+        insertVideo(getSyTime(),ImChatBean.MSG_RIGHT_VIDEO, path);
         mConversationManager.sendMessage(video, mMessageSendListener);
     }
 
@@ -821,5 +812,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             IMLog.e(mMessage.toString());
             queryMessage(mMessage.get(0));
         }
+    }
+
+    private long getSyTime() {
+        return System.currentTimeMillis();
     }
 }

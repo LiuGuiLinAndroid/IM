@@ -132,7 +132,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void done(IMUser imUser, BmobException e) {
                 LodingView.getInstance().hide();
                 if (e == null) {
-                    Constants.isLogin = true;
                     CommonUtils.Toast(LoginActivity.this, getString(R.string.str_login_success));
                     CommonUtils.startActivity(LoginActivity.this, MainActivity.class, true);
                 } else {

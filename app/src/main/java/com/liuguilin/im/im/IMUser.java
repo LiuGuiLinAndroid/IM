@@ -1,5 +1,7 @@
 package com.liuguilin.im.im;
 
+import java.io.Serializable;
+
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 
@@ -10,7 +12,7 @@ import cn.bmob.v3.datatype.BmobFile;
  * Email: lgl@szokl.com.cn
  * Profile: 用户
  */
-public class IMUser extends BmobUser {
+public class IMUser extends BmobUser implements Serializable {
 
     //昵称
     private String nickname;

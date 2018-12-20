@@ -205,18 +205,6 @@ public class SessionFragment extends BaseFragment implements SwipeRefreshLayout.
         mSwLayout.setRefreshing(false);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         switch (event.getType()) {

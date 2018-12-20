@@ -1,5 +1,7 @@
 package com.liuguilin.im.list;
 
+import com.liuguilin.im.bean.ImChatBean;
+
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 
@@ -12,13 +14,13 @@ import cn.bmob.newim.bean.BmobIMMessage;
  * Email: lgl@szokl.com.cn
  * Profile: 按照时间排序
  */
-public class TimeComparison implements Comparator<BmobIMMessage> {
+public class TimeComparison implements Comparator<ImChatBean> {
 
     @Override
-    public int compare(BmobIMMessage o1, BmobIMMessage o2) {
-        if (o1.getCreateTime() > o2.getCreateTime()) {
+    public int compare(ImChatBean o1, ImChatBean o2) {
+        if (o1.getUpdateTime() > o2.getUpdateTime()) {
             return 1;
-        } else if (o1.getCreateTime() == o2.getCreateTime()) {
+        } else if (o1.getUpdateTime() == o2.getUpdateTime()) {
             return 0;
         }
         return -1;

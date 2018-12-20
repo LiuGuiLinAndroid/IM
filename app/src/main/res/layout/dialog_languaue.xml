@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="@dimen/size_login_dialog_width"
+        android:layout_height="wrap_content"
+        android:background="@color/color_white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ll_zh"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_login_login_item_height"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical|right">
+
+                <ImageView
+                    android:id="@+id/iv_zh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/img_check" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="@string/str_languaue_zh"
+                android:textColor="@color/color_black" />
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_all_line_height"
+            android:alpha="0.2"
+            android:background="@color/color_gary" />
+
+        <LinearLayout
+            android:id="@+id/ll_tw"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_login_login_item_height"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical|right">
+
+                <ImageView
+                    android:id="@+id/iv_tw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/img_check" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="@string/str_languaue_tw"
+                android:textColor="@color/color_black" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_all_line_height"
+            android:alpha="0.2"
+            android:background="@color/color_gary" />
+
+        <LinearLayout
+            android:id="@+id/ll_en"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_login_login_item_height"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical|right">
+
+                <ImageView
+                    android:id="@+id/iv_en"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/img_check" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="@string/str_languaue_en"
+                android:textColor="@color/color_black" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

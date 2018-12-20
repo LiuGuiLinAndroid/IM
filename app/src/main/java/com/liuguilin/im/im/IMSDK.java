@@ -25,6 +25,7 @@ import cn.bmob.newim.core.BmobIMClient;
 import cn.bmob.newim.event.MessageEvent;
 import cn.bmob.newim.listener.ConnectListener;
 import cn.bmob.newim.listener.ConnectStatusChangeListener;
+import cn.bmob.newim.listener.ConversationListener;
 import cn.bmob.newim.listener.MessageSendListener;
 import cn.bmob.newim.listener.MessagesQueryListener;
 import cn.bmob.newim.notification.BmobNotificationManager;
@@ -47,14 +48,6 @@ import cn.bmob.v3.listener.UpdateListener;
  */
 public class IMSDK {
 
-    /**
-     * 是否登录
-     *
-     * @return
-     */
-    public static boolean isLogin() {
-        return Constants.isLogin;
-    }
 
     /**
      * 获取当前用户信息
@@ -398,6 +391,16 @@ public class IMSDK {
         Intent pendingIntent = new Intent(mContext, cls);
         pendingIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         BmobNotificationManager.getInstance(mContext).showNotification(mBitmap, title, msg, content, pendingIntent);
+    }
+
+    /**
+     * 修改密码
+     * @param oldPw
+     * @param newPw
+     * @param listener
+     */
+    public static void changePw(String oldPw, String newPw, UpdateListener listener) {
+        BmobUser.updateCurrentUserPassword(oldPw, newPw, listener);
     }
 
     /**

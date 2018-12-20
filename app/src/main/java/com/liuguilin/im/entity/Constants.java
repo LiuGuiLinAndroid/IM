@@ -16,8 +16,7 @@ public class Constants {
     //Project Log Switch
     public static final boolean DEBUG = true;
 
-    //Is Login
-    public static boolean isLogin = false;
+    public static final String NEWS_KEY = "fe06d421e616b5deda176b5ef1e7f6df";
 
     //Current Fragment
     public static Fragment CURRENT_FRAGMENT = null;

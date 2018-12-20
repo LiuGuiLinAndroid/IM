@@ -3,7 +3,6 @@ package com.liuguilin.im.receiver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.service.quicksettings.Tile;
 import android.text.TextUtils;
 
 import com.liuguilin.im.MainActivity;
@@ -17,11 +16,8 @@ import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.im.NewFriend;
 import com.liuguilin.im.ui.NewFriendActivity;
-import com.liuguilin.im.utils.CommonUtils;
-import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
-
-import org.litepal.crud.LitePalSupport;
+import com.liuguilin.im.utils.SharedPreUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +37,7 @@ import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * FileName: IMHandlerReceiver
@@ -171,6 +168,11 @@ public class IMHandlerReceiver extends BmobIMMessageHandler {
      * @param msg     消息实体
      */
     private void showNotify(final Class<?> cls, final String text, final String name, final String userMsg, final BmobIMMessage msg) {
+
+        if (!SharedPreUtils.getInstance().getBool("newMsg", true)) {
+            return;
+        }
+
         IMSDK.queryFriend("objectId", msg.getFromId(), new FindListener<IMUser>() {
             @Override
             public void done(List<IMUser> list, BmobException e) {
@@ -214,6 +216,7 @@ public class IMHandlerReceiver extends BmobIMMessageHandler {
      * @return
      */
     public Bitmap returnBitMap(final String url) {
+        mBitmap = null;
         new Thread(new Runnable() {
             @Override
             public void run() {

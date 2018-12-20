@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/includ_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/ll_change_pw"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_et_height"
+        android:layout_marginTop="@dimen/size_me_top_pading"
+        android:background="@color/color_white"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/str_setting_change_pw"
+            android:textColor="@color/color_black" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img_user_arrow" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_line_height"
+        android:alpha="0.2"
+        android:background="@color/color_gary" />
+
+    <LinearLayout
+        android:id="@+id/ll_switch_languaue"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_et_height"
+        android:background="@color/color_white"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/str_setting_switch_languaue"
+            android:textColor="@color/color_black" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img_user_arrow" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_line_height"
+        android:alpha="0.2"
+        android:background="@color/color_gary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_all_et_height"
+        android:background="@color/color_white"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/str_setting_new_msg"
+            android:textColor="@color/color_black" />
+
+        <ImageView
+            android:id="@+id/iv_new_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btn_exit_app"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size_login_button_top_pading"
+        android:layout_marginTop="@dimen/size_login_button_top_pading"
+        android:background="@drawable/shape_all_button_bg"
+        android:text="@string/str_setting_exit_app"
+        android:textColor="@color/color_white" />
+
+</LinearLayout>

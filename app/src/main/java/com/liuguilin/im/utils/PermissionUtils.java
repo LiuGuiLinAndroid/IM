@@ -41,6 +41,7 @@ public class PermissionUtils {
 
     /**
      * 请求所有权限
+     *
      * @param mActivity
      * @param requestCode
      */
@@ -49,7 +50,8 @@ public class PermissionUtils {
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE}, requestCode);
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.READ_PHONE_STATE}, requestCode);
     }
 
     /**

@@ -44,6 +44,10 @@ public class DialogManager {
         return new DialogView(mContext, layoutId, R.style.Theme_dialog, gravity);
     }
 
+    public DialogView initView(Context mContext, int layoutId) {
+        return new DialogView(mContext, layoutId, R.style.Theme_dialog, Gravity.CENTER);
+    }
+
     /**
      * 显示
      *

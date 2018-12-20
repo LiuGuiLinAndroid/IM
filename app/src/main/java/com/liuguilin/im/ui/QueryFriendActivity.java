@@ -1,5 +1,6 @@
 package com.liuguilin.im.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,8 +44,6 @@ public class QueryFriendActivity extends BaseActivity implements View.OnClickLis
     private RecyclerView mAddFriendRyView;
     private List<IMUser> mList = new ArrayList<>();
     private UniversalAdapter<IMUser> mAdapter;
-
-    public static IMUser mClickimUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +93,10 @@ public class QueryFriendActivity extends BaseActivity implements View.OnClickLis
                 hodler.getSubView(R.id.ll_user).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mClickimUser = mList.get(position);
-                        CommonUtils.startActivity(QueryFriendActivity.this,UserInfoActivity.class,false);
+                        IMUser mClickimUser = mList.get(position);
+                        Intent intent = new Intent(QueryFriendActivity.this,UserInfoActivity.class);
+                        intent.putExtra("user",mClickimUser);
+                        startActivity(intent);
                     }
                 });
             }

@@ -36,7 +36,7 @@ public class LodingView {
     }
 
     public void initView(Context mContext) {
-        mLodingView = DialogManager.getInstance().initView(mContext, R.layout.dialog_loding, Gravity.CENTER);
+        mLodingView = DialogManager.getInstance().initView(mContext, R.layout.dialog_loding);
         mLodingView.setCancelable(false);
         ImageView ivLoding = mLodingView.findViewById(R.id.ivLoding);
         GlideUtils.loadGif(mContext, R.drawable.gif_login_loding, ivLoding);

@@ -34,7 +34,9 @@ import java.util.List;
 
 import cn.bmob.newim.BmobIM;
 import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.bean.BmobIMUserInfo;
+import cn.bmob.newim.listener.MessageSendListener;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
@@ -119,9 +121,15 @@ public class FriendFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void initDeleteDialog() {
-        mDeleteDialog = DialogManager.getInstance().initView(getActivity(), R.layout.dialog_delete, Gravity.CENTER);
+        mDeleteDialog = DialogManager.getInstance().initView(getActivity(), R.layout.dialog_delete);
         tv_delete = mDeleteDialog.findViewById(R.id.tv_delete);
         tv_delete.setOnClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getFriends();
     }
 
     /**
@@ -186,17 +194,20 @@ public class FriendFragment extends BaseFragment implements View.OnClickListener
                 IMLog.i("DELETE_ID:" + DELETE_ID);
                 if (DELETE_ID >= 0) {
                     if (mList.size() > DELETE_ID) {
-                        IMSDK.deleteFriend(mList.get(DELETE_ID), new UpdateListener() {
+                        final Friend friend = mList.get(DELETE_ID);
+                        IMUser im = mImUserList.get(DELETE_ID);
+                        IMSDK.deleteFriend(friend, new UpdateListener() {
                             @Override
                             public void done(BmobException e) {
                                 if (e == null) {
                                     mList.remove(DELETE_ID);
+                                    mImUserList.remove(DELETE_ID);
                                     mAdapter.notifyDataSetChanged();
                                     CommonUtils.Toast(getActivity(), getString(R.string.str_toast_delete_success));
                                     IMLog.i("delete friend");
                                 } else {
                                     CommonUtils.Toast(getActivity(), getString(R.string.str_toast_delete_fail));
-                                    IMLog.e(e.toString());
+                                    IMLog.e("deleteFriend:" + e.toString());
                                 }
                             }
                         });
@@ -205,18 +216,6 @@ public class FriendFragment extends BaseFragment implements View.OnClickListener
                 DialogManager.getInstance().hide(mDeleteDialog);
                 break;
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

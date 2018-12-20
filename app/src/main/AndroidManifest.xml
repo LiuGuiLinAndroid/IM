@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
     <application
         android:name=".base.BaseApplication"
@@ -87,7 +88,8 @@
         <activity android:name=".ui.RegUserActivity" />
 
         <!--登录-->
-        <activity android:name=".ui.LoginActivity" />
+        <activity
+            android:name=".ui.LoginActivity" />
 
         <!--忘记密码-->
         <activity android:name=".ui.ForgetPwActivity" />
@@ -117,6 +119,12 @@
 
         <!--扫一扫-->
         <activity android:name=".ui.ScanActivity" />
+
+        <!--设置-->
+        <activity android:name=".ui.SettingActivity" />
+
+        <!--修改密码-->
+        <activity android:name=".ui.ChangePwActivity" />
 
     </application>
 

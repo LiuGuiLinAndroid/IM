@@ -11,10 +11,6 @@ import cn.bmob.v3.BmobObject;
  */
 public class Friend extends BmobObject {
 
-    private int type;
-    private String nickName;
-    private String letter;
-
     //自己
     private IMUser imUser;
 
@@ -37,27 +33,4 @@ public class Friend extends BmobObject {
         this.imUserFriend = imUserFriend;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public String getLetter() {
-        return letter;
-    }
-
-    public void setLetter(String letter) {
-        this.letter = letter;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
 }

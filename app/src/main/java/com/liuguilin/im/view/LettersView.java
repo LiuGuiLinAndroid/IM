@@ -85,8 +85,8 @@ public class LettersView extends View {
         for (int i = 0; i < strChars.length; i++) {
             //设置选中字母的颜色
             if (i == checkIndex) {
-                mPaint.setColor(Color.RED);
-                mPaint.setTextSize(50);
+                mPaint.setColor(getResources().getColor(R.color.colorPrimary));
+                mPaint.setTextSize(60);
             } else {
                 mPaint.setColor(Color.BLACK);
                 //设置字体大小
@@ -122,7 +122,7 @@ public class LettersView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
-                setBackgroundResource(R.color.colorAccent);
+                setBackgroundColor(getResources().getColor(R.color.color_gary));
                 //获取点击的Y坐标，以此来判断选中的字母
                 float y = event.getY();
                 Log.i(TAG, "y:" + y);

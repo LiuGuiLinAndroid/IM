@@ -51,6 +51,9 @@ public class ImChatBean {
     //文件消息
     private String msgFile;
 
+    //更新时间
+    private long updateTime;
+
     public int getType() {
         return type;
     }
@@ -123,6 +126,14 @@ public class ImChatBean {
         this.msgFile = msgFile;
     }
 
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
+    }
+
     @Override
     public String toString() {
         return "ImChatBean{" +
@@ -135,6 +146,7 @@ public class ImChatBean {
                 ", msgVoice='" + msgVoice + '\'' +
                 ", msgVideo='" + msgVideo + '\'' +
                 ", msgFile='" + msgFile + '\'' +
+                ", updateTime=" + updateTime +
                 '}';
     }
 }

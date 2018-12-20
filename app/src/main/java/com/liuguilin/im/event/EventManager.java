@@ -17,12 +17,17 @@ public class EventManager {
     public static final int EVENT_TYPE_NEW_FIREND_UN = 1;
     //刷新好友列表
     public static final int EVENT_TYPE_FRIEND_LIST = 2;
-
     //接收到消息事件
     public static final int EVENT_TYPE_MSG_EVENT = 3;
-
     //刷新主页未读
     public static final int EVENT_TYPE_MAIN_SIZE = 4;
+    //退出主页
+    public static final int EVENT_TYPE_MAIN_EXIT = 5;
+    //退出设置
+    public static final int EVENT_TYPE_SETTING_EXIT = 6;
+
+    //刷新語言
+    public static final int EVENT_TYPE_UPDATE_LANGUAUE = 7;
 
     /**
      * 消息类型

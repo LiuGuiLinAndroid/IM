@@ -75,6 +75,9 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void initView() {
+
+        initErrorDialog();
+
         include_title_iv_back = (RelativeLayout) findViewById(R.id.include_title_iv_back);
         include_title_text = (TextView) findViewById(R.id.include_title_text);
         iv_user = (CircleImageView) findViewById(R.id.iv_user);
@@ -95,18 +98,17 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
         //逻辑
         include_title_text.setText(getString(R.string.str_user_info_title_text));
 
-        initErrorDialog();
+        IMUser imUser = (IMUser) getIntent().getSerializableExtra("user");
 
-        if (QueryFriendActivity.mClickimUser != null) {
-
-            String nickName = QueryFriendActivity.mClickimUser.getNickname();
+        if (imUser != null) {
+            String nickName = imUser.getNickname();
             if (!TextUtils.isEmpty(nickName)) {
                 tv_niname.setText(nickName);
             }
-            String userName = QueryFriendActivity.mClickimUser.getUsername();
+            String userName = imUser.getUsername();
             tv_account.setText(userName);
 
-            final String objectId = QueryFriendActivity.mClickimUser.getObjectId();
+            final String objectId = imUser.getObjectId();
             IMLog.i("objectId:" + objectId);
             //查询
             IMSDK.queryFriends(new FindListener<Friend>() {
@@ -134,9 +136,9 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
                 }
             });
 
-            iv_sex.setImageResource(QueryFriendActivity.mClickimUser.isSex() ? R.drawable.img_boy : R.drawable.img_girl);
+            iv_sex.setImageResource(imUser.isSex() ? R.drawable.img_boy : R.drawable.img_girl);
 
-            BmobFile bmobFile = QueryFriendActivity.mClickimUser.getAvatar();
+            BmobFile bmobFile = imUser.getAvatar();
             if (bmobFile != null) {
                 String fileUrl = bmobFile.getFileUrl();
                 if (!TextUtils.isEmpty(fileUrl)) {
@@ -147,20 +149,20 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
             } else {
                 iv_user.setImageResource(R.drawable.img_def_photo);
             }
-            String city = QueryFriendActivity.mClickimUser.getCity();
+            String city = imUser.getCity();
             if (!TextUtils.isEmpty(city)) {
                 tv_city.setText(city);
             }
-            String desc = QueryFriendActivity.mClickimUser.getDesc();
+            String desc = imUser.getDesc();
             if (!TextUtils.isEmpty(desc)) {
                 tv_desc.setText(desc);
             }
 
             //构建聊天方
             info = new BmobIMUserInfo(
-                    QueryFriendActivity.mClickimUser.getObjectId(),
-                    QueryFriendActivity.mClickimUser.getUsername(),
-                    QueryFriendActivity.mClickimUser.getAvatar() == null ? "" : QueryFriendActivity.mClickimUser.getAvatar().getFileUrl());
+                    imUser.getObjectId(),
+                    imUser.getUsername(),
+                    imUser.getAvatar() == null ? "" : imUser.getAvatar().getFileUrl());
             //构建聊天室
             conversationEntrance = BmobIM.getInstance().startPrivateConversation(info, null);
         } else {
@@ -169,7 +171,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void initErrorDialog() {
-        mErrorDialog = DialogManager.getInstance().initView(this, R.layout.dialog_error, Gravity.CENTER);
+        mErrorDialog = DialogManager.getInstance().initView(this, R.layout.dialog_error);
         mErrorDialog.setCancelable(false);
 
         tv_content = (TextView) mErrorDialog.findViewById(R.id.tv_content);

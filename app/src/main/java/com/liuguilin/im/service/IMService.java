@@ -41,7 +41,7 @@ public class IMService extends Service {
                 if (e == null) {
                     IMLog.i("uid:" + s);
                 } else {
-                    IMLog.e("connect error");
+                    IMLog.e("connect error:" + e.toString());
                 }
             }
         });
