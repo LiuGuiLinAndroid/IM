@@ -1,7 +1,12 @@
 package com.liuguilin.im.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +27,15 @@ import java.util.logging.XMLFormatter;
  * Email: lgl@szokl.com.cn
  * Profile: 资讯
  */
-public class NewsFragment extends BaseFragment implements ViewPager.OnPageChangeListener, TabLayout.BaseOnTabSelectedListener {
+public class NewsFragment extends BaseFragment {
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
+
+    private NewsAdapter mNewsAdapter;
+
+    private String[] mStrTitle;
+    private String[] mStrTitleEn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,44 +45,64 @@ public class NewsFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void initView(View view) {
+
+        mStrTitle = getResources().getStringArray(R.array.news_title);
+        mStrTitleEn = getResources().getStringArray(R.array.news_title_en);
+
         mTabLayout = (TabLayout) view.findViewById(R.id.mTabLayout);
         mViewPager = (ViewPager) view.findViewById(R.id.mViewPager);
 
-        mViewPager.addOnPageChangeListener(this);
-        mTabLayout.addOnTabSelectedListener(this);
+        for (int i = 0; i < mStrTitle.length; i++) {
+            mTabLayout.addTab(mTabLayout.newTab().setText(mStrTitle[i]));
+        }
+
+        mViewPager.setOffscreenPageLimit(mStrTitle.length);
+        mNewsAdapter = new NewsAdapter(getFragmentManager());
+        mViewPager.setAdapter(mNewsAdapter);
+
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition(), true);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
-    @Override
-    public void onPageScrolled(int i, float v, int i1) {
+    class NewsAdapter extends FragmentPagerAdapter {
 
-    }
+        public NewsAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-    @Override
-    public void onPageSelected(int i) {
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mStrTitle[position];
+        }
 
-    }
+        @Override
+        public Fragment getItem(int i) {
+            NewsContentFragment contentFragment = new NewsContentFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("title", mStrTitleEn[i]);
+            contentFragment.setArguments(bundle);
+            return contentFragment;
+        }
 
-    @Override
-    public void onPageScrollStateChanged(int i) {
-
-    }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
-    }
-
-    class NewsAdapter extends XMLFormatter{
-
+        @Override
+        public int getCount() {
+            return mStrTitle.length;
+        }
     }
 }

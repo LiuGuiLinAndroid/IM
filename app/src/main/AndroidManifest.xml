@@ -126,6 +126,9 @@
         <!--修改密码-->
         <activity android:name=".ui.ChangePwActivity" />
 
+        <!--新闻详情-->
+        <activity android:name=".ui.NewsContentActivity" />
+
     </application>
 
 </manifest>

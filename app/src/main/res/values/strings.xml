@@ -118,6 +118,9 @@
     <string name="str_languaue_tw">繁體中文</string>
     <string name="str_languaue_en">English</string>
 
+    <!--新闻-->
+    <string name="str_news_title_text">新闻详情</string>
+
     <!--Toast-->
     <string name="str_toast_to_friend">你们已经是好友了!</string>
     <string name="str_toast_op_success">操作成功</string>
@@ -172,6 +175,7 @@
     <string name="str_common_delete">刪除</string>
     <string name="str_common_commit">提交</string>
     <string name="str_common_send">发送</string>
+    <string name="str_common_share">分享</string>
     <string name="str_common_boy">男</string>
     <string name="str_common_girl">女</string>
 

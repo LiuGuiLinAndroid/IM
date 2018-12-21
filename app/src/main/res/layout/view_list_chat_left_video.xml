@@ -22,12 +22,27 @@
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/img_def_photo" />
 
-            <ImageView
-                android:id="@+id/iv_left_video"
-                android:layout_width="200dp"
-                android:layout_height="150dp"
-                android:layout_marginLeft="10dp"
-                android:gravity="center" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_left_video"
+                    android:layout_width="200dp"
+                    android:layout_height="150dp"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:scaleType="fitXY" />
+
+
+                <ImageView
+                    android:id="@+id/iv_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/img_play" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
