@@ -34,6 +34,7 @@ import com.liuguilin.im.adapter.UniversalAdapter;
 import com.liuguilin.im.adapter.UniversalViewHolder;
 import com.liuguilin.im.base.BaseActivity;
 import com.liuguilin.im.bean.ImChatBean;
+import com.liuguilin.im.entity.Constants;
 import com.liuguilin.im.event.EventManager;
 import com.liuguilin.im.event.MessageEvent;
 import com.liuguilin.im.im.IMSDK;
@@ -109,6 +110,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     private List<BmobIMMessage> mMessage = new ArrayList<>();
     private LinearLayoutManager mLinearLayoutManager;
 
+    private SimpleDateFormat simpleDateFormat;
+
     //聊天对象的头像
     private static String chatPhotoUrl = "";
 
@@ -166,6 +169,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     private void initView() {
 
         initVoiceDialog();
+
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         include_title_iv_back = (RelativeLayout) findViewById(R.id.include_title_iv_back);
         include_title_text = (TextView) findViewById(R.id.include_title_text);
@@ -242,18 +247,46 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                     case ImChatBean.MSG_LEFT_TEXT:
                         setChatUserPhoto(hodler, R.id.iv_photo);
                         hodler.setText(R.id.tv_left_text, model.getMsgText());
+                        //onclick
+                        hodler.getSubView(R.id.tv_left_text).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startTextActivity(((TextView)(hodler.getSubView(R.id.tv_left_text))).getText().toString(),TextBrowseActivity.class);
+                            }
+                        });
                         break;
                     case ImChatBean.MSG_RIGHT_TEXT:
                         hodler.setText(R.id.tv_right_text, model.getMsgText());
                         setUserPhoto(hodler, R.id.iv_photo);
+                        //onclick
+                        hodler.getSubView(R.id.tv_right_text).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startTextActivity(((TextView)(hodler.getSubView(R.id.tv_right_text))).getText().toString(),TextBrowseActivity.class);
+                            }
+                        });
                         break;
                     case ImChatBean.MSG_LEFT_IMG:
                         setChatUserPhoto(hodler, R.id.iv_photo);
                         setMsgImg(model.getMsgImg(), hodler, R.id.iv_left_img);
+                        //onclick
+                        hodler.getSubView(R.id.iv_left_img).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startTextActivity(model.getMsgImg(),ImgBrowseActivity.class);
+                            }
+                        });
                         break;
                     case ImChatBean.MSG_RIGHT_IMG:
                         setUserPhoto(hodler, R.id.iv_photo);
                         setMsgImg(model.getMsgImg(), hodler, R.id.iv_right_img);
+                        //onclick
+                        hodler.getSubView(R.id.iv_right_img).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startTextActivity(model.getMsgImg(),ImgBrowseActivity.class);
+                            }
+                        });
                         break;
                     case ImChatBean.MSG_LEFT_LOCATION:
                         setChatUserPhoto(hodler, R.id.iv_photo);
@@ -282,11 +315,25 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                                 });
                             }
                         }).start();
+                        //onclick
+                        hodler.getSubView(R.id.iv_left_video).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startTextActivity(model.getMsgVideo(),VideoBrowseActivity.class);
+                            }
+                        });
                         break;
                     case ImChatBean.MSG_RIGHT_VIDEO:
                         setUserPhoto(hodler, R.id.iv_photo);
                         IMLog.e("right:" + model.getMsgVideo());
                         hodler.setImageBitmap(R.id.iv_right_video, CommonUtils.createVideoThumb(model.getMsgVideo()));
+                        //onclick
+                        hodler.getSubView(R.id.iv_right_video).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startTextActivity(model.getMsgVideo(),VideoBrowseActivity.class);
+                            }
+                        });
                         break;
                     case ImChatBean.MSG_LEFT_FILE:
                         setChatUserPhoto(hodler, R.id.iv_photo);
@@ -577,6 +624,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ImChatBean bean = new ImChatBean();
         bean.setType(ImChatBean.MSG_TIPS);
         bean.setTips(tips);
+        judgeTime();
         insertListData(bean, updateTime);
     }
 
@@ -590,6 +638,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgText(text);
+        judgeTime();
         insertListData(bean, updateTime);
     }
 
@@ -603,6 +652,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgImg(imgPath);
+        judgeTime();
         insertListData(bean, updateTime);
     }
 
@@ -616,6 +666,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgLocation(location);
+        judgeTime();
         insertListData(bean, updateTime);
     }
 
@@ -629,6 +680,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgVoice(voice);
+        judgeTime();
         insertListData(bean, updateTime);
     }
 
@@ -642,6 +694,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgVideo(video);
+        judgeTime();
         insertListData(bean, updateTime);
     }
 
@@ -655,7 +708,21 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ImChatBean bean = new ImChatBean();
         bean.setType(type);
         bean.setMsgFile(file);
+        judgeTime();
         insertListData(bean, updateTime);
+    }
+
+    /**
+     * 判断是否插入时间
+     */
+    private void judgeTime() {
+        //判断时间间隔
+        long nowTime = getSyTime();
+        long time = nowTime - Constants.currentImTime;
+        if (time > 5 * 60 * 1000) {
+            insertTime(nowTime, simpleDateFormat.format(getSyTime()));
+            Constants.currentImTime = nowTime;
+        }
     }
 
     /**
@@ -708,7 +775,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     private void sendTextMsg(String text) {
         BmobIMTextMessage msg = new BmobIMTextMessage();
         msg.setContent(text);
-        insertText(getSyTime(),ImChatBean.MSG_RIGHT_TEXT, text);
+        insertText(getSyTime(), ImChatBean.MSG_RIGHT_TEXT, text);
         mConversationManager.sendMessage(msg, mMessageSendListener);
     }
 
@@ -719,7 +786,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void sendImgMsg(String path) {
         BmobIMImageMessage image = new BmobIMImageMessage(path);
-        insertImg(getSyTime(),ImChatBean.MSG_RIGHT_IMG, path);
+        insertImg(getSyTime(), ImChatBean.MSG_RIGHT_IMG, path);
         mConversationManager.sendMessage(image, mMessageSendListener);
     }
 
@@ -730,7 +797,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void sendVideoMsg(String path) {
         BmobIMVideoMessage video = new BmobIMVideoMessage(path);
-        insertVideo(getSyTime(),ImChatBean.MSG_RIGHT_VIDEO, path);
+        insertVideo(getSyTime(), ImChatBean.MSG_RIGHT_VIDEO, path);
         mConversationManager.sendMessage(video, mMessageSendListener);
     }
 
@@ -816,5 +883,16 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     private long getSyTime() {
         return System.currentTimeMillis();
+    }
+
+    /**
+     * 跳转文本
+     *
+     * @param text
+     */
+    private void startTextActivity(String text,Class<?>cls) {
+        Intent intent = new Intent(this, cls);
+        intent.putExtra("text", text);
+        startActivity(intent);
     }
 }

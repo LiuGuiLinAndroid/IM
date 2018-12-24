@@ -118,6 +118,11 @@
     <string name="str_languaue_tw">繁體中文</string>
     <string name="str_languaue_en">English</string>
 
+    <!--浏览-->
+    <string name="str_brower_text">文本浏览</string>
+    <string name="str_brower_img">图片浏览</string>
+    <string name="str_brower_video">视频浏览</string>
+
     <!--新闻-->
     <string name="str_news_title_text">新闻详情</string>
 

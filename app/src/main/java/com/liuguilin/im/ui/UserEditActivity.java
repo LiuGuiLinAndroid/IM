@@ -1,13 +1,14 @@
 package com.liuguilin.im.ui;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -18,15 +19,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.bigkoo.pickerview.view.TimePickerView;
-import com.liuguilin.im.MainActivity;
+import com.google.gson.Gson;
 import com.liuguilin.im.R;
 import com.liuguilin.im.base.BaseActivity;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.manager.DialogManager;
+import com.liuguilin.im.model.CityModel;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
@@ -34,14 +40,15 @@ import com.liuguilin.im.utils.PictureUtils;
 import com.liuguilin.im.view.DialogView;
 import com.liuguilin.im.view.LodingView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,6 +68,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Profile: 编辑信息
  */
 public class UserEditActivity extends BaseActivity implements View.OnClickListener {
+
+    private static int LOAD_FILE_SUCCEESS = 999;
 
     private static int TAKEPHOTO = 1000;
     private static int TAKEALBUM = 1001;
@@ -104,6 +113,18 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
     private List<String> mListProvince = new ArrayList<>();
     private List<List<String>> mListCity = new ArrayList<>();
     private List<List<String>> mListArea = new ArrayList<>();
+
+    private OptionsPickerView pvOptions;
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (msg.what == LOAD_FILE_SUCCEESS) {
+
+            }
+            return false;
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,8 +194,52 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                         getString(R.string.str_time_seconds))
                 .build();
 
-        //读取城市
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String cityList = null;
+                //读取城市
+                AssetManager assetManager = getAssets();
+                try {
+                    InputStream inputStream = assetManager.open("city.json");
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String i;
+                    while ((i = bufferedReader.readLine()) != null) {
+                        cityList += i;
+                    }
+                    bufferedReader.close();
+                    parsingCity(cityList);
+                } catch (IOException e) {
+                   IMLog.i(e.toString());
+                }
+            }
+        }).start();
 
+        pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+
+            }
+        }).setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
+            @Override
+            public void onOptionsSelectChanged(int options1, int options2, int options3) {
+
+            }
+        })
+                .setTitleText("").build();
+    }
+
+    /**
+     * 解析城市数据
+     * @param cityList
+     */
+    private void parsingCity(String cityList) {
+        IMLog.i("parsingCity");
+        if (TextUtils.isEmpty(cityList)) {
+            return;
+        }
+        mHandler.sendEmptyMessage(LOAD_FILE_SUCCEESS);
     }
 
     private void updateUser() {
@@ -274,7 +339,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                 pvTime.show();
                 break;
             case R.id.ll_city:
-                Toast.makeText(this, "ll_city", Toast.LENGTH_SHORT).show();
+                pvOptions.show();
                 break;
         }
     }
@@ -402,26 +467,5 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                 GlideUtils.loadFile(this, uploadPhotoFile, R.drawable.img_load_img, iv_photo);
             }
         }
-    }
-
-    /**
-     * 读取Assets下的Json
-     * @param mContext
-     * @param fileName
-     * @return
-     */
-    public String getAssetsJson(Context mContext, String fileName) {
-        StringBuilder stringBuilder = new StringBuilder();
-        try {
-            AssetManager assetManager = mContext.getAssets();
-            BufferedReader bf = new BufferedReader(new InputStreamReader(assetManager.open(fileName)));
-            String line;
-            while ((line = bf.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stringBuilder.toString();
     }
 }

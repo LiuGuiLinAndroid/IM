@@ -129,6 +129,11 @@
         <!--新闻详情-->
         <activity android:name=".ui.NewsContentActivity" />
 
+        <!--浏览-->
+        <activity android:name=".ui.TextBrowseActivity"/>
+        <activity android:name=".ui.ImgBrowseActivity"/>
+        <activity android:name=".ui.VideoBrowseActivity"/>
+
     </application>
 
 </manifest>

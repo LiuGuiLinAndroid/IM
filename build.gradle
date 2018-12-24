@@ -19,6 +19,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://jitpack.io" }
         //Bmob Maven Repositories
         maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
     }
