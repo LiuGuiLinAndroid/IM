@@ -91,6 +91,9 @@ public class FriendFragment extends BaseFragment implements View.OnClickListener
                 hodler.getSubView(R.id.ll_user).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if(mImUserList.size() == 0){
+                            return;
+                        }
                         IMUser im = mImUserList.get(position);
                         //构建聊天方
                         BmobIMUserInfo info = new BmobIMUserInfo(im.getObjectId(), im.getUsername(), im == null ? "" : im.getAvatar().getFileUrl());

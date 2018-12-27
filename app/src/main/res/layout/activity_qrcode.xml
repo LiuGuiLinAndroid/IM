@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="扫一扫上面的二维码图案加我IM"
+            android:text="@string/str_qrcode_tips"
             android:textColor="@color/color_gary" />
 
     </LinearLayout>

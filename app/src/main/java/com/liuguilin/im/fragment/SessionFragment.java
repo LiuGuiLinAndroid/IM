@@ -19,10 +19,8 @@ import com.liuguilin.im.im.AgreeAddFriendMessage;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.utils.CommonUtils;
-import com.liuguilin.im.utils.FormatCurrentUtils;
 import com.liuguilin.im.utils.IMLog;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.newim.bean.BmobIMConversation;
-import cn.bmob.newim.bean.BmobIMConversationType;
 import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.bean.BmobIMMessageType;
 import cn.bmob.v3.datatype.BmobFile;
@@ -79,14 +76,12 @@ public class SessionFragment extends BaseFragment implements SwipeRefreshLayout.
                     hodler.setVisibility(R.id.tv_size, View.INVISIBLE);
                 }
                 //设置时间
-                long time = model.getUpdateTime();
-                hodler.setText(R.id.tv_time, FormatCurrentUtils.getTimeRange(getActivity(), time, System.currentTimeMillis() / 1000));
+                hodler.setText(R.id.tv_time, CommonUtils.parsingTime(model.getUpdateTime()));
                 //设置消息
                 setMessage(model, hodler);
 
                 //设置头像和标题
                 setPhotoAndTitle(model.getConversationId(), hodler);
-
 
                 //点击事件
                 hodler.getSubView(R.id.ll_user).setOnClickListener(new View.OnClickListener() {

@@ -28,4 +28,7 @@ public class Constants {
 
     //每五分钟插入
     public static long currentImTime = 0;
+
+    //新闻次数限制
+    public static boolean IS_NEWS = false;
 }

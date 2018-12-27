@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.provider.BlockedNumberContract;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -112,6 +113,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     private SimpleDateFormat simpleDateFormat;
 
+    private RecyclerView mEmojiRyView;
+    private List<Integer> mEmojiList = new ArrayList<>();
+    private UniversalAdapter<Integer> mEmojiAdapter;
+
     //聊天对象的头像
     private static String chatPhotoUrl = "";
 
@@ -124,11 +129,14 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     private Handler mHandler = new Handler();
 
+    private String id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        initEmoji();
         initChat();
         initView();
     }
@@ -141,7 +149,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         if (bundle != null) {
             BmobIMConversation conversationEntrance = (BmobIMConversation) bundle.getSerializable("c");
             mConversationManager = BmobIMConversation.obtain(BmobIMClient.getInstance(), conversationEntrance);
-            String id = mConversationManager.getConversationId();
+            id = mConversationManager.getConversationId();
             IMSDK.queryFriend("objectId", id, new FindListener<IMUser>() {
                 @Override
                 public void done(List<IMUser> list, BmobException e) {
@@ -190,6 +198,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ll_emoji = (LinearLayout) findViewById(R.id.ll_emoji);
         mChatRyView = (RecyclerView) findViewById(R.id.mChatRyView);
         mSwLayout = (SwipeRefreshLayout) findViewById(R.id.mSwLayout);
+        mEmojiRyView = findViewById(R.id.mEmojiRyView);
 
         include_title_iv_back.setOnClickListener(this);
         iv_voice.setOnClickListener(this);
@@ -200,6 +209,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ll_camera.setOnClickListener(this);
         ll_album.setOnClickListener(this);
         mSwLayout.setOnRefreshListener(this);
+        title_right_text.setOnClickListener(this);
 
         title_right_text.setText(getString(R.string.str_chat_more_right_text));
 
@@ -251,7 +261,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         hodler.getSubView(R.id.tv_left_text).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startTextActivity(((TextView)(hodler.getSubView(R.id.tv_left_text))).getText().toString(),TextBrowseActivity.class);
+                                startTextActivity(((TextView) (hodler.getSubView(R.id.tv_left_text))).getText().toString(), TextBrowseActivity.class);
                             }
                         });
                         break;
@@ -262,7 +272,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         hodler.getSubView(R.id.tv_right_text).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startTextActivity(((TextView)(hodler.getSubView(R.id.tv_right_text))).getText().toString(),TextBrowseActivity.class);
+                                startTextActivity(((TextView) (hodler.getSubView(R.id.tv_right_text))).getText().toString(), TextBrowseActivity.class);
                             }
                         });
                         break;
@@ -273,7 +283,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         hodler.getSubView(R.id.iv_left_img).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startTextActivity(model.getMsgImg(),ImgBrowseActivity.class);
+                                startTextActivity(model.getMsgImg(), ImgBrowseActivity.class);
                             }
                         });
                         break;
@@ -284,7 +294,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         hodler.getSubView(R.id.iv_right_img).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startTextActivity(model.getMsgImg(),ImgBrowseActivity.class);
+                                startTextActivity(model.getMsgImg(), ImgBrowseActivity.class);
                             }
                         });
                         break;
@@ -303,35 +313,24 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                     case ImChatBean.MSG_LEFT_VIDEO:
                         setChatUserPhoto(hodler, R.id.iv_photo);
                         IMLog.e("left:" + model.getMsgVideo());
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final Bitmap bitmap = CommonUtils.createVideoThumb(model.getMsgVideo(), 200, 150);
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        hodler.setImageBitmap(R.id.iv_left_video, bitmap);
-                                    }
-                                });
-                            }
-                        }).start();
+                        setMegVideo(model.getMsgVideo(), hodler, R.id.iv_left_video);
                         //onclick
                         hodler.getSubView(R.id.iv_left_video).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startTextActivity(model.getMsgVideo(),VideoBrowseActivity.class);
+                                startTextActivity(model.getMsgVideo(), VideoBrowseActivity.class);
                             }
                         });
                         break;
                     case ImChatBean.MSG_RIGHT_VIDEO:
                         setUserPhoto(hodler, R.id.iv_photo);
                         IMLog.e("right:" + model.getMsgVideo());
-                        hodler.setImageBitmap(R.id.iv_right_video, CommonUtils.createVideoThumb(model.getMsgVideo()));
+                        setMegVideo(model.getMsgVideo(), hodler, R.id.iv_right_video);
                         //onclick
                         hodler.getSubView(R.id.iv_right_video).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startTextActivity(model.getMsgVideo(),VideoBrowseActivity.class);
+                                startTextActivity(model.getMsgVideo(), VideoBrowseActivity.class);
                             }
                         });
                         break;
@@ -380,7 +379,78 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         });
         mChatRyView.setAdapter(mAdapter);
 
+        mEmojiRyView.setLayoutManager(new GridLayoutManager(this, 12));
+        mEmojiAdapter = new UniversalAdapter<>(mEmojiList, new UniversalAdapter.OnBindDataInterface<Integer>() {
+            @Override
+            public void onBindData(Integer model, final UniversalViewHolder hodler, int type, final int position) {
+                hodler.setImageResource(R.id.iv_emoji, model);
+                hodler.getSubView(R.id.iv_emoji).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int resId = mEmojiList.get(position);
+                        String text = et_text.getText().toString().trim();
+                        IMLog.i("txt:" + text + "len:" + text.length());
+                    }
+                });
+            }
+
+            @Override
+            public int getItemLayoutId(int viewType) {
+                return R.layout.view_list_chat_emoji;
+            }
+        });
+        mEmojiRyView.setAdapter(mEmojiAdapter);
+
         queryMessage(null);
+    }
+
+    private void setMegVideo(final String msgVideo, final UniversalViewHolder hodler, final int viewId) {
+        if (!TextUtils.isEmpty(msgVideo)) {
+            if (msgVideo.contains("&")) {
+                final String[] list = msgVideo.split("&");
+                if (list != null) {
+                    if (list.length > 0) {
+                        if (!TextUtils.isEmpty(list[0])) {
+                            hodler.setImageBitmap(viewId, CommonUtils.createVideoThumb(list[0]));
+                        } else {
+                            if (list.length > 1) {
+                                if (!TextUtils.isEmpty(list[1])) {
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            final Bitmap bitmap = CommonUtils.createVideoThumb(list[1], 200, 150);
+                                            mHandler.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    hodler.setImageBitmap(viewId, bitmap);
+                                                }
+                                            });
+                                        }
+                                    }).start();
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (msgVideo.startsWith("http:")) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Bitmap bitmap = CommonUtils.createVideoThumb(msgVideo, 200, 150);
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    hodler.setImageBitmap(viewId, bitmap);
+                                }
+                            });
+                        }
+                    }).start();
+                } else {
+                    hodler.setImageBitmap(viewId, CommonUtils.createVideoThumb(msgVideo));
+                }
+            }
+        }
     }
 
     /**
@@ -456,6 +526,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 mSwLayout.setRefreshing(false);
                 if (e == null) {
                     if (list != null && list.size() > 0) {
+                        if (mList.size() > 0) {
+                            mList.clear();
+                        }
                         for (int i = 0; i < list.size(); i++) {
                             BmobIMMessage message = list.get(i);
                             mMessage.add(message);
@@ -581,6 +654,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.ll_album:
                 toAlbum();
+                break;
+            case R.id.title_right_text:
+                Intent intent = new Intent(this, UserMsgActivity.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
                 break;
         }
     }
@@ -716,6 +794,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      * 判断是否插入时间
      */
     private void judgeTime() {
+        if (Constants.currentImTime == 0) {
+            return;
+        }
         //判断时间间隔
         long nowTime = getSyTime();
         long time = nowTime - Constants.currentImTime;
@@ -890,9 +971,73 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      *
      * @param text
      */
-    private void startTextActivity(String text,Class<?>cls) {
+    private void startTextActivity(String text, Class<?> cls) {
         Intent intent = new Intent(this, cls);
         intent.putExtra("text", text);
         startActivity(intent);
+    }
+
+    private void initEmoji() {
+        mEmojiList.add(R.drawable.d_aini);
+        mEmojiList.add(R.drawable.d_baibai);
+        mEmojiList.add(R.drawable.d_beishang);
+        mEmojiList.add(R.drawable.d_bishi);
+        mEmojiList.add(R.drawable.d_bizui);
+        mEmojiList.add(R.drawable.d_chanzui);
+        mEmojiList.add(R.drawable.d_chijing);
+        mEmojiList.add(R.drawable.d_dahaqi);
+        mEmojiList.add(R.drawable.d_dalian);
+        mEmojiList.add(R.drawable.d_ding);
+        mEmojiList.add(R.drawable.d_doge);
+        mEmojiList.add(R.drawable.d_fangdumianju);
+        mEmojiList.add(R.drawable.d_feizao);
+        mEmojiList.add(R.drawable.d_ganmao);
+        mEmojiList.add(R.drawable.d_guzhang);
+        mEmojiList.add(R.drawable.d_haha);
+        mEmojiList.add(R.drawable.d_haixiu);
+        mEmojiList.add(R.drawable.d_han);
+        mEmojiList.add(R.drawable.d_hehe);
+        mEmojiList.add(R.drawable.d_heixian);
+        mEmojiList.add(R.drawable.d_heng);
+        mEmojiList.add(R.drawable.d_huaxin);
+        mEmojiList.add(R.drawable.d_jiyan);
+        mEmojiList.add(R.drawable.d_keai);
+        mEmojiList.add(R.drawable.d_kelian);
+        mEmojiList.add(R.drawable.d_ku);
+        mEmojiList.add(R.drawable.d_kun);
+        mEmojiList.add(R.drawable.d_landelini);
+        mEmojiList.add(R.drawable.d_lei);
+        mEmojiList.add(R.drawable.d_miao);
+        mEmojiList.add(R.drawable.d_nanhaier);
+        mEmojiList.add(R.drawable.d_nu);
+        mEmojiList.add(R.drawable.d_numa);
+        mEmojiList.add(R.drawable.d_nvhaier);
+        mEmojiList.add(R.drawable.d_qian);
+        mEmojiList.add(R.drawable.d_qinqin);
+        mEmojiList.add(R.drawable.d_shayan);
+        mEmojiList.add(R.drawable.d_shengbing);
+        mEmojiList.add(R.drawable.d_shenshou);
+        mEmojiList.add(R.drawable.d_shiwang);
+        mEmojiList.add(R.drawable.d_shuai);
+        mEmojiList.add(R.drawable.d_shuijiao);
+        mEmojiList.add(R.drawable.d_sikao);
+        mEmojiList.add(R.drawable.d_taikaixin);
+        mEmojiList.add(R.drawable.d_touxiao);
+        mEmojiList.add(R.drawable.d_travel);
+        mEmojiList.add(R.drawable.d_tu);
+        mEmojiList.add(R.drawable.d_tuzi);
+        mEmojiList.add(R.drawable.d_wabishi);
+        mEmojiList.add(R.drawable.d_weiqu);
+        mEmojiList.add(R.drawable.d_xiaoku);
+        mEmojiList.add(R.drawable.d_xixi);
+        mEmojiList.add(R.drawable.d_xu);
+        mEmojiList.add(R.drawable.d_yinxian);
+        mEmojiList.add(R.drawable.d_yiwen);
+        mEmojiList.add(R.drawable.d_youhengheng);
+        mEmojiList.add(R.drawable.d_yun);
+        mEmojiList.add(R.drawable.d_zhuakuang);
+        mEmojiList.add(R.drawable.d_zhutou);
+        mEmojiList.add(R.drawable.d_zuohengheng);
+
     }
 }

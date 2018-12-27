@@ -2,7 +2,6 @@ package com.liuguilin.im.ui;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
@@ -29,10 +27,10 @@ import com.bigkoo.pickerview.view.TimePickerView;
 import com.google.gson.Gson;
 import com.liuguilin.im.R;
 import com.liuguilin.im.base.BaseActivity;
+import com.liuguilin.im.bean.CityBean;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.manager.DialogManager;
-import com.liuguilin.im.model.CityModel;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
@@ -41,14 +39,8 @@ import com.liuguilin.im.view.DialogView;
 import com.liuguilin.im.view.LodingView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -110,9 +102,9 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
 
     private TimePickerView pvTime;
 
-    private List<String> mListProvince = new ArrayList<>();
-    private List<List<String>> mListCity = new ArrayList<>();
-    private List<List<String>> mListArea = new ArrayList<>();
+    private ArrayList<CityBean> options1Items = new ArrayList<>();
+    private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
+    private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
 
     private OptionsPickerView pvOptions;
 
@@ -120,7 +112,7 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
         @Override
         public boolean handleMessage(Message msg) {
             if (msg.what == LOAD_FILE_SUCCEESS) {
-
+                pvOptions.setPicker(options1Items, options2Items, options3Items);//三级选择器
             }
             return false;
         }
@@ -194,52 +186,77 @@ public class UserEditActivity extends BaseActivity implements View.OnClickListen
                         getString(R.string.str_time_seconds))
                 .build();
 
+        //加载数据
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String cityList = null;
-                //读取城市
-                AssetManager assetManager = getAssets();
-                try {
-                    InputStream inputStream = assetManager.open("city.json");
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    String i;
-                    while ((i = bufferedReader.readLine()) != null) {
-                        cityList += i;
+                String JsonData = CommonUtils.getAssetsJson(UserEditActivity.this, "city.json");
+                ArrayList<CityBean> jsonBean = parseData(JsonData);
+
+                options1Items = jsonBean;
+
+                for (int i = 0; i < jsonBean.size(); i++) {//遍历省份
+                    ArrayList<String> CityList = new ArrayList<>();//该省的城市列表（第二级）
+                    ArrayList<ArrayList<String>> Province_AreaList = new ArrayList<>();//该省的所有地区列表（第三极）
+
+                    for (int c = 0; c < jsonBean.get(i).getCityList().size(); c++) {//遍历该省份的所有城市
+                        String CityName = jsonBean.get(i).getCityList().get(c).getName();
+                        CityList.add(CityName);//添加城市
+                        ArrayList<String> City_AreaList = new ArrayList<>();//该城市的所有地区列表
+
+                        //如果无地区数据，建议添加空字符串，防止数据为null 导致三个选项长度不匹配造成崩溃
+                        if (jsonBean.get(i).getCityList().get(c).getArea() == null
+                                || jsonBean.get(i).getCityList().get(c).getArea().size() == 0) {
+                            City_AreaList.add("");
+                        } else {
+                            City_AreaList.addAll(jsonBean.get(i).getCityList().get(c).getArea());
+                        }
+                        Province_AreaList.add(City_AreaList);//添加该省所有地区数据
                     }
-                    bufferedReader.close();
-                    parsingCity(cityList);
-                } catch (IOException e) {
-                   IMLog.i(e.toString());
+                    /**
+                     * 添加城市数据
+                     */
+                    options2Items.add(CityList);
+
+                    /**
+                     * 添加地区数据
+                     */
+                    options3Items.add(Province_AreaList);
                 }
+                mHandler.sendEmptyMessage(LOAD_FILE_SUCCEESS);
             }
         }).start();
 
         pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
-
+                String tx = options1Items.get(options1).getPickerViewText() + "-" +
+                        options2Items.get(options1).get(options2) + "-" +
+                        options3Items.get(options1).get(options2).get(options3);
+                tv_city.setText(tx);
             }
-        }).setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
-            @Override
-            public void onOptionsSelectChanged(int options1, int options2, int options3) {
-
-            }
-        })
-                .setTitleText("").build();
+        }).setTitleText(getString(R.string.str_user_edit_selete_city)).build();
     }
 
     /**
-     * 解析城市数据
-     * @param cityList
+     * Gson 解析
+     *
+     * @param result
+     * @return
      */
-    private void parsingCity(String cityList) {
-        IMLog.i("parsingCity");
-        if (TextUtils.isEmpty(cityList)) {
-            return;
+    public ArrayList<CityBean> parseData(String result) {
+        ArrayList<CityBean> detail = new ArrayList<>();
+        try {
+            JSONArray data = new JSONArray(result);
+            Gson gson = new Gson();
+            for (int i = 0; i < data.length(); i++) {
+                CityBean entity = gson.fromJson(data.optJSONObject(i).toString(), CityBean.class);
+                detail.add(entity);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mHandler.sendEmptyMessage(LOAD_FILE_SUCCEESS);
+        return detail;
     }
 
     private void updateUser() {

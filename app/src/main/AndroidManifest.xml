@@ -97,7 +97,7 @@
         <!--编辑信息-->
         <activity
             android:name=".ui.UserEditActivity"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
+            android:windowSoftInputMode="stateVisible|adjustResize|stateUnspecified" />
 
         <!--查询好友-->
         <activity android:name=".ui.QueryFriendActivity" />
@@ -133,6 +133,9 @@
         <activity android:name=".ui.TextBrowseActivity"/>
         <activity android:name=".ui.ImgBrowseActivity"/>
         <activity android:name=".ui.VideoBrowseActivity"/>
+
+        <!--好友信息-->
+        <activity android:name=".ui.UserMsgActivity"/>
 
     </application>
 

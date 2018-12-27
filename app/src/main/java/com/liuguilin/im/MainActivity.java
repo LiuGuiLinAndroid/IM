@@ -85,7 +85,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private FragmentTransaction mMeTransaction;
 
     private DialogView mMenuDialog;
-    private TextView tv_more_link;
     private TextView tv_add_friend;
     private TextView tv_scan;
     private TextView tv_unread_size;
@@ -175,11 +174,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void initMenuDialog() {
         mMenuDialog = DialogManager.getInstance().initView(this, R.layout.dialog_mian_menu);
-        tv_more_link = (TextView) mMenuDialog.findViewById(R.id.tv_more_link);
         tv_add_friend = (TextView) mMenuDialog.findViewById(R.id.tv_add_friend);
         tv_scan = (TextView) mMenuDialog.findViewById(R.id.tv_scan);
 
-        tv_more_link.setOnClickListener(this);
         tv_add_friend.setOnClickListener(this);
         tv_scan.setOnClickListener(this);
     }
@@ -359,9 +356,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else if (Constants.CURRENT_FRAGMENT instanceof MeFragment) {
                     CommonUtils.startActivity(this, SettingActivity.class, false);
                 }
-                break;
-            case R.id.tv_more_link:
-                DialogManager.getInstance().hide(mMenuDialog);
                 break;
             case R.id.tv_add_friend:
                 DialogManager.getInstance().hide(mMenuDialog);

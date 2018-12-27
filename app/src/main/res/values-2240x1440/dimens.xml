@@ -53,6 +53,9 @@
     <!--朋友-->
     <dimen name="size_friend_list_title_size">57.0px</dimen>
 
+    <!--新聞-->
+    <dimen name="size_news_item_height">570.0px</dimen>
+
 </resources>
 
 

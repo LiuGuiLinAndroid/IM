@@ -12,20 +12,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_more_link"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/size_login_login_item_height"
-            android:gravity="center"
-            android:text="@string/str_main_title_more_link"
-            android:textColor="@color/color_black" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/size_all_line_height"
-            android:alpha="0.2"
-            android:background="@color/color_gary" />
-
-        <TextView
             android:id="@+id/tv_add_friend"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_login_login_item_height"

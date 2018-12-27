@@ -19,6 +19,7 @@ import com.liuguilin.im.adapter.UniversalAdapter;
 import com.liuguilin.im.adapter.UniversalViewHolder;
 import com.liuguilin.im.base.BaseFragment;
 import com.liuguilin.im.bean.NewsBean;
+import com.liuguilin.im.entity.Constants;
 import com.liuguilin.im.http.HttpHelper;
 import com.liuguilin.im.model.NewsModel;
 import com.liuguilin.im.ui.NewsContentActivity;
@@ -112,7 +113,9 @@ public class NewsContentFragment extends BaseFragment implements SwipeRefreshLay
         });
         mNewsRyView.setAdapter(mAdapter);
 
-        getNews();
+        if(Constants.IS_NEWS){
+            getNews();
+        }
     }
 
     private void getNews() {
