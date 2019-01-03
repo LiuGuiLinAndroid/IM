@@ -51,7 +51,8 @@ public class PermissionUtils {
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.READ_PHONE_STATE}, requestCode);
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
     }
 
     /**

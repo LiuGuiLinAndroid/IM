@@ -13,7 +13,14 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission
+        android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".base.BaseApplication"
@@ -28,6 +35,10 @@
         <meta-data
             android:name="Bmob_APP_KEY"
             android:value="ec7815e3d26f1d7fb86b283c01ccaa94" />
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="Ch11bTdXB5TrPCXaU3E3kZ3gahmckb4T"></meta-data>
 
         <!--首页-->
         <activity android:name=".ui.IndexActivity">
@@ -60,6 +71,12 @@
 
         <service android:name="cn.bmob.newim.core.service.HeartBeatService" />
 
+        <!--Baidu Map-->
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
+
         <!--相机兼容7.0-->
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -88,8 +105,7 @@
         <activity android:name=".ui.RegUserActivity" />
 
         <!--登录-->
-        <activity
-            android:name=".ui.LoginActivity" />
+        <activity android:name=".ui.LoginActivity" />
 
         <!--忘记密码-->
         <activity android:name=".ui.ForgetPwActivity" />
@@ -130,12 +146,12 @@
         <activity android:name=".ui.NewsContentActivity" />
 
         <!--浏览-->
-        <activity android:name=".ui.TextBrowseActivity"/>
-        <activity android:name=".ui.ImgBrowseActivity"/>
-        <activity android:name=".ui.VideoBrowseActivity"/>
+        <activity android:name=".ui.TextBrowseActivity" />
+        <activity android:name=".ui.ImgBrowseActivity" />
+        <activity android:name=".ui.VideoBrowseActivity" />
 
         <!--好友信息-->
-        <activity android:name=".ui.UserMsgActivity"/>
+        <activity android:name=".ui.UserMsgActivity" />
 
     </application>
 

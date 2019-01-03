@@ -2,10 +2,7 @@ package com.liuguilin.im.list;
 
 import com.liuguilin.im.bean.ImChatBean;
 
-import java.text.SimpleDateFormat;
 import java.util.Comparator;
-
-import cn.bmob.newim.bean.BmobIMMessage;
 
 /**
  * FileName: TimeComparison

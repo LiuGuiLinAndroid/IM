@@ -13,11 +13,13 @@ import com.liuguilin.im.R;
 import com.liuguilin.im.adapter.UniversalAdapter;
 import com.liuguilin.im.adapter.UniversalViewHolder;
 import com.liuguilin.im.base.BaseFragment;
+import com.liuguilin.im.db.DBHelper;
 import com.liuguilin.im.event.EventManager;
 import com.liuguilin.im.event.MessageEvent;
 import com.liuguilin.im.im.AgreeAddFriendMessage;
 import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
+import com.liuguilin.im.im.NewFriend;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.IMLog;
 
@@ -197,6 +199,7 @@ public class SessionFragment extends BaseFragment implements SwipeRefreshLayout.
             }
             mSessionAdapter.notifyDataSetChanged();
         }
+
         mSwLayout.setRefreshing(false);
     }
 

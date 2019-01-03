@@ -1,5 +1,6 @@
 package com.liuguilin.im.ui;
 
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -42,12 +43,14 @@ import com.liuguilin.im.im.IMSDK;
 import com.liuguilin.im.im.IMUser;
 import com.liuguilin.im.list.TimeComparison;
 import com.liuguilin.im.manager.DialogManager;
+import com.liuguilin.im.manager.MapManager;
 import com.liuguilin.im.utils.CommonUtils;
 import com.liuguilin.im.utils.GlideUtils;
 import com.liuguilin.im.utils.IMLog;
 import com.liuguilin.im.utils.PermissionUtils;
 import com.liuguilin.im.utils.PictureUtils;
 import com.liuguilin.im.view.DialogView;
+import com.liuguilin.im.view.LodingView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -58,10 +61,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMFileMessage;
 import cn.bmob.newim.bean.BmobIMImageMessage;
+import cn.bmob.newim.bean.BmobIMLocationMessage;
 import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.bean.BmobIMTextMessage;
 import cn.bmob.newim.bean.BmobIMVideoMessage;
@@ -83,6 +90,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     private static int TAKEPHOTO = 1100;
     private static int TAKEALBUM = 1101;
+    private static int TAKEFILE = 1102;
 
     private RelativeLayout include_title_iv_back;
     private TextView include_title_text;
@@ -177,6 +185,23 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     private void initView() {
 
         initVoiceDialog();
+        initLocationDialog();
+
+        MapManager.getInstance().initLocation(this, new MapManager.OnLocationResultListener() {
+            @Override
+            public void OnLocationSucceess(String address, double lat, double lon) {
+                LodingView.getInstance().hide();
+                CommonUtils.Toast(ChatActivity.this,getString(R.string.str_toest_location_succeess));
+                IMLog.i("address:" + address + "lat:" + lat + "lon:" + lon);
+                sendLocationMsg(address,lat,lon);
+            }
+
+            @Override
+            public void OnLocationFail() {
+                LodingView.getInstance().hide();
+                CommonUtils.Toast(ChatActivity.this,getString(R.string.str_toest_location_fail));
+            }
+        });
 
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -210,6 +235,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         ll_album.setOnClickListener(this);
         mSwLayout.setOnRefreshListener(this);
         title_right_text.setOnClickListener(this);
+        ll_file.setOnClickListener(this);
+        ll_location.setOnClickListener(this);
 
         title_right_text.setText(getString(R.string.str_chat_more_right_text));
 
@@ -402,6 +429,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         mEmojiRyView.setAdapter(mEmojiAdapter);
 
         queryMessage(null);
+    }
+
+    private void initLocationDialog() {
+        LodingView.getInstance().initView(this);
     }
 
     private void setMegVideo(final String msgVideo, final UniversalViewHolder hodler, final int viewId) {
@@ -660,6 +691,13 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 intent.putExtra("id", id);
                 startActivity(intent);
                 break;
+            case R.id.ll_file:
+                toFile();
+                break;
+            case R.id.ll_location:
+                LodingView.getInstance().show();
+                MapManager.getInstance().startLocation();
+                break;
         }
     }
 
@@ -882,6 +920,31 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         mConversationManager.sendMessage(video, mMessageSendListener);
     }
 
+    /**
+     * 发送文件
+     *
+     * @param path
+     */
+    private void sendFileMsg(String path) {
+        BmobIMFileMessage file = new BmobIMFileMessage(path);
+        mConversationManager.sendMessage(file, mMessageSendListener);
+    }
+
+    /**
+     * 发送地理位置
+     *
+     * @param address
+     * @param lat
+     * @param lon
+     */
+    private void sendLocationMsg(String address, double lat, double lon) {
+        BmobIMLocationMessage location = new BmobIMLocationMessage(address, lat, lon);
+        Map<String, Object> map = new HashMap<>();
+        map.put("from", "百度地图");
+        location.setExtraMap(map);
+        mConversationManager.sendMessage(location, mMessageSendListener);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         switch (event.getType()) {
@@ -922,6 +985,16 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         startActivityForResult(photoPickerIntent, TAKEALBUM);
     }
 
+    /**
+     * 文件
+     */
+    private void toFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/*");
+        Intent wrapperIntent = Intent.createChooser(intent, null);
+        startActivityForResult(wrapperIntent, TAKEFILE);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -940,6 +1013,17 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                     }
                     if (!TextUtils.isEmpty(path)) {
                         uploadPhotoPath = path;
+                    }
+                }
+            } else if (requestCode == TAKEFILE) {
+                if (data != null) {
+                    Uri fileUri = data.getData();
+                    if (fileUri != null) {
+                        String filePath = fileUri.getPath();
+                        if (!TextUtils.isEmpty(filePath)) {
+                            IMLog.i("filePath:" + filePath);
+                            //sendFileMsg(filePath);
+                        }
                     }
                 }
             }

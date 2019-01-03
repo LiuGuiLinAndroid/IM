@@ -150,6 +150,7 @@ public class IMHandlerReceiver extends BmobIMMessageHandler {
                         if (e == null) {
                             showNotify(MainActivity.class, mContext.getString(R.string.str_toast_agree_friend), fromUserInfo.getName(), message.getMsg(), msg);
                             EventManager.post(EventManager.EVENT_TYPE_FRIEND_LIST);
+                            EventManager.post(EventManager.EVENT_TYPE_MSG_EVENT);
                         } else {
                             IMLog.e(e.toString());
                         }
