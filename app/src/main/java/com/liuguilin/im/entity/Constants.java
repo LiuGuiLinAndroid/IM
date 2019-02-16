@@ -30,5 +30,5 @@ public class Constants {
     public static long currentImTime = 0;
 
     //新闻次数限制
-    public static boolean IS_NEWS = false;
+    public static boolean IS_NEWS = true;
 }
